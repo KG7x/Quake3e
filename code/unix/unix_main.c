@@ -606,7 +606,7 @@ void Sys_SendKeyEvents( void )
 ==================
 Sys_Sleep
 
-Block execution for msec or until input is recieved.
+Block execution for msec or until input is received.
 ==================
 */
 void Sys_Sleep( int msec ) {

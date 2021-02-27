@@ -300,7 +300,7 @@ static void CM_SubdivideGridColumns( cGrid_t *grid ) {
 		// grid->points[i+2][x] is an interpolating control point
 
 		//
-		// first see if we can collapse the aproximating collumn away
+		// first see if we can collapse the aproximating column away
 		//
 		for ( j = 0 ; j < grid->height ; j++ ) {
 			if ( CM_NeedsSubdivision( grid->points[i][j], grid->points[i+1][j], grid->points[i+2][j] ) ) {
@@ -886,7 +886,7 @@ static void CM_AddFacetBevels( facet_t *facet ) {
 			if (CM_PlaneEqual(&planes[facet->surfacePlane], plane, &flipped)) {
 				continue;
 			}
-			// see if the plane is allready present
+			// see if the plane is already present
 			for ( i = 0 ; i < facet->numBorders ; i++ ) {
 				if (CM_PlaneEqual(&planes[facet->borderPlanes[i]], plane, &flipped))
 					break;
@@ -952,7 +952,7 @@ static void CM_AddFacetBevels( facet_t *facet ) {
 				if (CM_PlaneEqual(&planes[facet->surfacePlane], plane, &flipped)) {
 					continue;
 				}
-				// see if the plane is allready present
+				// see if the plane is already present
 				for ( i = 0 ; i < facet->numBorders ; i++ ) {
 					if (CM_PlaneEqual(&planes[facet->borderPlanes[i]], plane, &flipped)) {
 							break;
@@ -1234,7 +1234,7 @@ struct patchCollide_s *CM_GeneratePatchCollide( int width, int height, vec3_t *p
 	CM_RemoveDegenerateColumns( &grid );
 
 	// we now have a grid of points exactly on the curve
-	// the aproximate surface defined by these points will be
+	// the approximate surface defined by these points will be
 	// collided against
 	pf = Hunk_Alloc( sizeof( *pf ), h_high );
 	ClearBounds( pf->bounds[0], pf->bounds[1] );

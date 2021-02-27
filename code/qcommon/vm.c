@@ -1866,7 +1866,7 @@ intptr_t QDECL VM_Call( vm_t *vm, int nargs, int callnum, ... )
 		}
 		va_end(ap);
 
-		// add more agruments if you're changed MAX_VMMAIN_CALL_ARGS:
+		// add more arguments if you're changed MAX_VMMAIN_CALL_ARGS:
 		r = vm->entryPoint( callnum, args[0], args[1], args[2] );
 	} else {
 #if id386 && !defined __clang__ // calling convention doesn't need conversion in some cases

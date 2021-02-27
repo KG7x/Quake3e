@@ -474,7 +474,7 @@ static void R_InitExtensions( void )
 		if ( err )
 		{
 			ri.Printf( PRINT_WARNING, "Error resolving ARB program function '%s'\n", err );
-			qglGenProgramsARB = NULL; // indicates presense of ARB shaders functionality
+			qglGenProgramsARB = NULL; // indicates presence of ARB shaders functionality
 		}
 		else
 		{
@@ -488,7 +488,7 @@ static void R_InitExtensions( void )
 		if ( err )
 		{
 			ri.Printf( PRINT_WARNING, "Error resolving VBO function '%s'\n", err );
-			qglBindBufferARB = NULL; // indicates presense of VBO functionality
+			qglBindBufferARB = NULL; // indicates presence of VBO functionality
 		}
 		else
 		{
@@ -502,7 +502,7 @@ static void R_InitExtensions( void )
 		if ( err )
 		{
 			ri.Printf( PRINT_WARNING, "Error resolving FBO function '%s'\n", err );
-			qglGenFramebuffers = NULL; // indicates presense of FBO functionality
+			qglGenFramebuffers = NULL; // indicates presence of FBO functionality
 		}
 		else
 		{

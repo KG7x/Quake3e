@@ -456,7 +456,7 @@ void SV_SpawnServer( const char *mapname, qboolean killBots ) {
 	// server has changed
 	svs.snapFlagServerBit ^= SNAPFLAG_SERVERCOUNT;
 
-	// set nextmap to the same map, but it may be overriden
+	// set nextmap to the same map, but it may be overridden
 	// by the game startup or another console command
 	Cvar_Set( "nextmap", "map_restart 0" );
 //	Cvar_Set( "nextmap", va("map %s", server) );

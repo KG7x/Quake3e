@@ -274,7 +274,7 @@ static qboolean SV_LoadIP4DB( const char *filename )
 	FS_Read( buf, len, fh );
 	FS_FCloseFile( fh );
 
-	// check intergity of loaded databse
+	// check integrity of loaded databse
 	last_ip = 0;
 	num_tlds = len / 10;
 
@@ -2070,7 +2070,7 @@ static void SV_UserMove( client_t *cl, msg_t *msg, qboolean delta ) {
 			return;
 		}
 		SV_ClientEnterWorld( cl, &cmds[0] );
-		// the moves can be processed normaly
+		// the moves can be processed normally
 	}
 
 	// a bad cp command was sent, drop the client
