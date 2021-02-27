@@ -42,7 +42,7 @@ COM_SkipPath
 char *COM_SkipPath (char *pathname)
 {
 	char	*last;
-	
+
 	last = pathname;
 	while (*pathname)
 	{
@@ -98,10 +98,10 @@ string compare the end of the strings and return qtrue if strings match
 qboolean COM_CompareExtension(const char *in, const char *ext)
 {
 	int inlen, extlen;
-	
+
 	inlen = strlen(in);
 	extlen = strlen(ext);
-	
+
 	if(extlen <= inlen)
 	{
 		in += inlen - extlen;
@@ -109,7 +109,7 @@ qboolean COM_CompareExtension(const char *in, const char *ext)
 		if(!Q_stricmp(in, ext))
 			return qtrue;
 	}
-	
+
 	return qfalse;
 }
 
@@ -184,11 +184,11 @@ unsigned long Com_GenerateHashValue( const char *fname, const unsigned int size 
 
 	s = (byte*)fname;
 	hash = 0;
-	
+
 	while ( (c = hash_locase[(byte)*s++]) != '\0' ) {
 		hash = hash * 101 + c;
 	}
-	
+
 	hash = (hash ^ (hash >> 10) ^ (hash >> 20));
 	hash &= (size-1);
 
@@ -707,7 +707,7 @@ char *COM_ParseExt( const char **data_p, qboolean allowLineBreaks )
 	*data_p = data;
 	return com_token;
 }
-	
+
 
 /*
 ==============
@@ -743,7 +743,7 @@ char *COM_ParseComplex( const char **data_p, qboolean allowLineBreaks )
 	len = 0; 
 	shift = 0; // token line shift relative to com_lines
 	com_tokentype = TK_GENEGIC;
-	
+
 __reswitch:
 	switch ( *str )
 	{
@@ -805,7 +805,7 @@ __reswitch:
 		// single slash
 		com_token[ len++ ] = *str++;
 		break;
-	
+
 	// quoted string?
 	case '"':
 		str++; // skip leading '"'
@@ -1281,7 +1281,7 @@ void Q_strncpyz( char *dest, const char *src, int destsize )
 		Com_Error( ERR_FATAL, "Q_strncpyz: NULL dest" );
 	}
 
-	if ( !src ) 
+	if ( !src )
 	{
 		Com_Error( ERR_FATAL, "Q_strncpyz: NULL src" );
 	}
@@ -1319,7 +1319,7 @@ int Q_stricmpn (const char *s1, const char *s2, int n) {
           return 1;
 
 
-	
+
 	do {
 		c1 = *s1++;
 		c2 = *s2++;
@@ -1327,7 +1327,7 @@ int Q_stricmpn (const char *s1, const char *s2, int n) {
 		if (!n--) {
 			return 0;		// strings are equal until end point
 		}
-		
+
 		if (c1 != c2) {
 			if (c1 >= 'a' && c1 <= 'z') {
 				c1 -= ('a' - 'A');
@@ -1347,7 +1347,7 @@ int Q_stricmpn (const char *s1, const char *s2, int n) {
 
 int Q_strncmp( const char *s1, const char *s2, int n ) {
 	int		c1, c2;
-	
+
 	do {
 		c1 = *s1++;
 		c2 = *s2++;
@@ -1355,12 +1355,12 @@ int Q_strncmp( const char *s1, const char *s2, int n ) {
 		if (!n--) {
 			return 0;		// strings are equal until end point
 		}
-		
+
 		if (c1 != c2) {
 			return c1 < c2 ? -1 : 1;
 		}
 	} while (c1);
-	
+
 	return 0;		// strings are equal
 }
 
@@ -1393,8 +1393,8 @@ int Q_stricmp( const char *s1, const char *s2 )
 	}
 	else if ( s2 == NULL )
 		return 1;
-	
-	do 
+
+	do
 	{
 		c1 = *s1++;
 		c2 = *s2++;
@@ -1498,7 +1498,7 @@ const char *Q_stristr( const char *s, const char *find)
 }
 
 
-int Q_replace( const char *str1, const char *str2, char *src, int max_len ) 
+int Q_replace( const char *str1, const char *str2, char *src, int max_len )
 {
 	int len1, len2, d, count;
 	const char *s0, *s1, *s2, *max;
@@ -1515,12 +1515,12 @@ int Q_replace( const char *str1, const char *str2, char *src, int max_len )
     len2 = strlen( str2 );
     d = len2 - len1;
 
-    if ( d > 0 ) // expand and replace mode    
+    if ( d > 0 ) // expand and replace mode
     {
         max = src + max_len;
         src += strlen( src );
 
-        do  
+        do
         {
             // expand source string
 			s1 = src;
@@ -1533,7 +1533,7 @@ int Q_replace( const char *str1, const char *str2, char *src, int max_len )
 
             while ( s1 >= s0 )
                 *dst-- = *s1--;
-			
+
 			// replace match
             s2 = str2;
 			while ( *s2 ) {
@@ -1546,17 +1546,17 @@ int Q_replace( const char *str1, const char *str2, char *src, int max_len )
         while ( match );
 
         return count;
-    } 
+    }
     else
     if ( d < 0 ) // shrink and replace mode
     {
-        do 
+        do
         {
             // shrink source string
             s1 = match + len1;
             dst = match + len2;
             while ( (*dst++ = *s1++) != '\0' );
-			
+
 			//replace match
             s2 = str2;
 			while ( *s2 ) {
@@ -1621,7 +1621,7 @@ char *Q_CleanStr( char *string ) {
 	while ((c = *s) != 0 ) {
 		if ( Q_IsColorString( s ) ) {
 			s++;
-		}		
+		}
 		else if ( c >= 0x20 && c <= 0x7E ) {
 			*d++ = c;
 		}
@@ -1636,13 +1636,13 @@ char *Q_CleanStr( char *string ) {
 int Q_CountChar(const char *string, char tocount)
 {
 	int count;
-	
+
 	for(count = 0; *string; string++)
 	{
 		if(*string == tocount)
 			count++;
 	}
-	
+
 	return count;
 }
 
@@ -1657,7 +1657,7 @@ int QDECL Com_sprintf( char *dest, int size, const char *fmt, ...)
 	va_list	argptr;
 	char	bigbuffer[32000];	// big, but small enough to fit in PPC stack
 
-	if ( !dest ) 
+	if ( !dest )
 	{
 		Com_Error( ERR_FATAL, "Com_sprintf: NULL dest" );
 #if	defined(_DEBUG) && defined(_WIN32)
@@ -1786,7 +1786,7 @@ char *Info_ValueForKey( const char *s, const char *key )
 	const char *v, *pkey;
 	char	*o, *o2;
 	int		klen, len;
-	
+
 	if ( !s || !key || !*key )
 		return "";
 
@@ -1963,7 +1963,7 @@ Info_RemoveKey
 int Info_RemoveKey( char *s, const char *key )
 {
 	char	*start;
-	char 	*pkey;
+	char	*pkey;
 	int		key_len, len;
 
 	key_len = (int) strlen( key );

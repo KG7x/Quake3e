@@ -154,14 +154,14 @@ typedef struct
 //	int	tmpPos,tmpSize;
 } unz_s;
 
-#define UNZ_OK                                  (0)
+#define UNZ_OK                  (0)
 #define UNZ_END_OF_LIST_OF_FILE (-100)
 #define UNZ_ERRNO               (Z_ERRNO)
 #define UNZ_EOF                 (0)
-#define UNZ_PARAMERROR                  (-102)
-#define UNZ_BADZIPFILE                  (-103)
-#define UNZ_INTERNALERROR               (-104)
-#define UNZ_CRCERROR                    (-105)
+#define UNZ_PARAMERROR          (-102)
+#define UNZ_BADZIPFILE          (-103)
+#define UNZ_INTERNALERROR       (-104)
+#define UNZ_CRCERROR            (-105)
 
 #define UNZ_CASESENSITIVE		1
 #define UNZ_NOTCASESENSITIVE	2
@@ -294,7 +294,7 @@ extern int unzCloseCurrentFile (unzFile file);
   Return UNZ_CRCERROR if all the file was read but the CRC is not good
 */
 
-												
+
 extern int unzReadCurrentFile (unzFile file, void* buf, unsigned len);
 
 /*

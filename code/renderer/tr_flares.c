@@ -357,9 +357,9 @@ void RB_RenderFlare( flare_t *f ) {
 		tess.numVertexes = 1;
 		VectorCopy(f->origin, tess.xyz[0]);
 		tess.fogNum = f->fogNum;
-	
+
 		RB_CalcModulateColorsByFog(fogFactors);
-		
+
 		// We don't need to render the flare if colors are 0 anyways.
 		if(!(fogFactors[0] || fogFactors[1] || fogFactors[2]))
 			return;
@@ -368,7 +368,7 @@ void RB_RenderFlare( flare_t *f ) {
 	iColor[0] = color[0] * fogFactors[0];
 	iColor[1] = color[1] * fogFactors[1];
 	iColor[2] = color[2] * fogFactors[2];
-	
+
 	RB_BeginSurface( tr.flareShader, f->fogNum );
 
 	// FIXME: use quadstamp?

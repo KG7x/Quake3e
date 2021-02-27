@@ -184,7 +184,7 @@ void CL_AddReliableCommand( const char *cmd, qboolean isDisconnectCmd ) {
 	// also leave one slot open for the disconnect command in this case.
 	
 	if ((isDisconnectCmd && unacknowledged > MAX_RELIABLE_COMMANDS) ||
-	    (!isDisconnectCmd && unacknowledged >= MAX_RELIABLE_COMMANDS))
+		(!isDisconnectCmd && unacknowledged >= MAX_RELIABLE_COMMANDS))
 	{
 		if( com_errorEntered )
 			return;
@@ -339,9 +339,9 @@ static void CL_WriteGamestate( qboolean initial )
 	} else {
 		CL_WriteServerCommands( &msg );
 	}
-	
+
 	clc.demoDeltaNum = 0; // reset delta for next snapshot
-	
+
 	MSG_WriteByte( &msg, svc_gamestate );
 	MSG_WriteLong( &msg, clc.serverCommandSequence );
 
@@ -368,7 +368,7 @@ static void CL_WriteGamestate( qboolean initial )
 
 	// finalize message
 	MSG_WriteByte( &msg, svc_EOF );
-	
+
 	// finished writing the gamestate stuff
 
 	// write the client num
@@ -494,7 +494,7 @@ static void CL_WriteSnapshot( void ) {
 
 	// Write all pending server commands
 	CL_WriteServerCommands( &msg );
-	
+
 	MSG_WriteByte( &msg, svc_snapshot );
 	MSG_WriteLong( &msg, snap->serverTime ); // sv.time
 	MSG_WriteByte( &msg, clc.demoDeltaNum ); // 0 or 1
@@ -673,7 +673,7 @@ CL_DemoCompleted
 static void CL_DemoCompleted( void ) {
 	if ( com_timedemo->integer ) {
 		int	time;
-		
+
 		time = Sys_Milliseconds() - clc.timeDemoStart;
 		if ( time > 0 ) {
 			Com_Printf( "%i frames, %3.*f seconds: %3.1f fps\n", clc.timeDemoFrames,
@@ -761,7 +761,7 @@ CL_WalkDemoExt
 static int CL_WalkDemoExt( const char *arg, char *name, fileHandle_t *handle )
 {
 	int i;
-	
+
 	*handle = FS_INVALID_HANDLE;
 	i = 0;
 
@@ -789,7 +789,7 @@ static int CL_WalkDemoExt( const char *arg, char *name, fileHandle_t *handle )
 CL_DemoExtCallback
 ====================
 */
-static qboolean CL_DemoNameCallback_f( const char *filename, int length ) 
+static qboolean CL_DemoNameCallback_f( const char *filename, int length )
 {
 	int version;
 
@@ -1059,11 +1059,11 @@ memory on the hunk from cgame, ui, and renderer
 =====================
 */
 void CL_MapLoading( void ) {
-  	if ( com_dedicated->integer ) {
-  		cls.state = CA_DISCONNECTED;
- 		Key_SetCatcher( KEYCATCH_CONSOLE );
-  		return;
-  	}
+	if ( com_dedicated->integer ) {
+		cls.state = CA_DISCONNECTED;
+		Key_SetCatcher( KEYCATCH_CONSOLE );
+		return;
+	}
 
 	if ( !com_cl_running->integer ) {
 		return;
@@ -1185,7 +1185,7 @@ This is also called on Com_Error and Com_Quit, so it shouldn't cause any errors
 qboolean CL_Disconnect( qboolean showMainMenu ) {
 	static qboolean cl_disconnecting = qfalse;
 	qboolean cl_restarted = qfalse;
-	
+
 	if ( !com_cl_running || !com_cl_running->integer ) {
 		return cl_restarted;
 	}
@@ -1441,7 +1441,7 @@ static void CL_RequestAuthorization( void ) {
 	}
 	nums[j] = 0;
 
-	fs = Cvar_Get ("cl_anonymous", "0", CVAR_INIT|CVAR_SYSTEMINFO );
+	fs = Cvar_Get( "cl_anonymous", "0", CVAR_INIT | CVAR_SYSTEMINFO );
 
 	NET_OutOfBandPrint(NS_CLIENT, &cls.authorizeServer, "getKeyAuthorize %i %s", fs->integer, nums );
 }
@@ -1542,7 +1542,7 @@ static void CL_Connect_f( void ) {
 		Com_Printf( "usage: connect [-4|-6] server\n");
 		return;	
 	}
-	
+
 	if( argc == 2 ) {
 		server = Cmd_Argv(1);
 	} else {
@@ -2104,17 +2104,17 @@ void CL_NextDownload( void )
 	char *remoteName, *localName;
 	qboolean useCURL = qfalse;
 
- 	// A download has finished, check whether this matches a referenced checksum
- 	if(*clc.downloadName)
- 	{
- 		const char *zippath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), clc.downloadName, NULL );
+	// A download has finished, check whether this matches a referenced checksum
+	if(*clc.downloadName)
+	{
+		const char *zippath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), clc.downloadName, NULL );
 
- 		if(!FS_CompareZipChecksum(zippath))
- 			Com_Error(ERR_DROP, "Incorrect checksum for file: %s", clc.downloadName);
- 	}
+		if(!FS_CompareZipChecksum(zippath))
+			Com_Error(ERR_DROP, "Incorrect checksum for file: %s", clc.downloadName);
+	}
 
- 	*clc.downloadTempName = *clc.downloadName = 0;
- 	Cvar_Set("cl_downloadName", "");
+	*clc.downloadTempName = *clc.downloadName = 0;
+	Cvar_Set("cl_downloadName", "");
 
 	// We are looking to start a download here
 	if (*clc.downloadList) {
@@ -2315,7 +2315,7 @@ static void CL_CheckForResend( void ) {
 			infoTruncated |= Info_RemoveKey( info, "xp_name" ) ? qtrue : qfalse;
 			infoTruncated |= Info_RemoveKey( info, "xp_country" ) ? qtrue : qfalse;
 		}
-	
+
 		len = strlen( info );
 		if ( len > MAX_USERINFO_LENGTH ) {
 			notOverflowed = qfalse;
@@ -2493,7 +2493,7 @@ static void CL_ServersResponsePacket( const netadr_t* from, msg_t *msg, qboolean
 	byte*			buffptr;
 	byte*			buffend;
 	serverInfo_t	*server;
-	
+
 	//Com_Printf("CL_ServersResponsePacket\n"); // moved down
 
 	if (cls.numglobalservers == -1) {
@@ -2540,10 +2540,10 @@ static void CL_ServersResponsePacket( const netadr_t* from, msg_t *msg, qboolean
 
 			if (buffend - buffptr < sizeof(addresses[numservers].ipv._6) + sizeof(addresses[numservers].port) + 1)
 				break;
-			
+
 			for(i = 0; i < sizeof(addresses[numservers].ipv._6); i++)
 				addresses[numservers].ipv._6[i] = *buffptr++;
-			
+
 			addresses[numservers].type = NA_IP6;
 			addresses[numservers].scope_id = from->scope_id;
 		}
@@ -2551,7 +2551,7 @@ static void CL_ServersResponsePacket( const netadr_t* from, msg_t *msg, qboolean
 		else
 			// syntax error!
 			break;
-			
+
 		// parse out port
 		addresses[numservers].port = (*buffptr++) << 8;
 		addresses[numservers].port += *buffptr++;
@@ -2560,7 +2560,7 @@ static void CL_ServersResponsePacket( const netadr_t* from, msg_t *msg, qboolean
 		// syntax check
 		if (*buffptr != '\\' && *buffptr != '/')
 			break;
-	
+
 		numservers++;
 		if (numservers >= MAX_SERVERSPERPACKET)
 			break;
@@ -2638,13 +2638,13 @@ static qboolean CL_ConnectionlessPacket( const netadr_t *from, msg_t *msg ) {
 	{
 		char *strver;
 		int ver;
-	
+
 		if ( cls.state != CA_CONNECTING )
 		{
 			Com_DPrintf( "Unwanted challenge response received. Ignored.\n" );
 			return qfalse;
 		}
-		
+
 		c = Cmd_Argv( 2 );
 		if ( *c )
 			challenge = atoi( c );
@@ -2663,7 +2663,7 @@ static qboolean CL_ConnectionlessPacket( const netadr_t *from, msg_t *msg ) {
 				}
 			}
 		}
-		
+
 		if ( clc.compat )
 		{
 			if( !NET_CompareAdr( from, &clc.serverAddress ) )
@@ -2726,7 +2726,7 @@ static qboolean CL_ConnectionlessPacket( const netadr_t *from, msg_t *msg ) {
 				Com_Printf("Bad connectResponse received. Ignored.\n");
 				return qfalse;
 			}
-			
+
 			if(challenge != clc.challenge)
 			{
 				Com_Printf("ConnectResponse with bad challenge received. Ignored.\n");
@@ -2921,7 +2921,7 @@ qboolean CL_NoDelay( void )
 {
 	if ( CL_VideoRecording() || ( com_timedemo->integer && clc.demofile != FS_INVALID_HANDLE ) )
 		return qtrue;
-	
+
 	return qfalse;
 }
 
@@ -3028,7 +3028,7 @@ void CL_Frame( int msec, int realMsec ) {
 			clc.aviVideoFrameRemainder = frameDuration - msec;
 		}
 	}
-	
+
 	if ( cl_autoRecordDemo->integer && !clc.demoplaying ) {
 		if ( cls.state == CA_ACTIVE && !clc.demorecording ) {
 			// If not recording a demo, and we should be, start one
@@ -3116,7 +3116,7 @@ CL_RefPrintf
 static __attribute__ ((format (printf, 2, 3))) void QDECL CL_RefPrintf( printParm_t level, const char *fmt, ... ) {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
-	
+
 	va_start( argptr, fmt );
 	Q_vsnprintf( msg, sizeof( msg ), fmt, argptr );
 	va_end( argptr );
@@ -3142,7 +3142,7 @@ static void CL_ShutdownRef( qboolean unloadDLL ) {
 		unloadDLL = qtrue;
 	}
 #endif
-	
+
 	if ( re.Shutdown ) {
 		if ( unloadDLL )
 			re.Shutdown( REF_UNLOAD_DLL );
@@ -4481,7 +4481,7 @@ static void CL_GlobalServers_f( void ) {
 	// -1 is used to distinguish a "no response"
 
 	i = NET_StringToAdr( masteraddress, &to, NA_UNSPEC );
-	
+
 	if ( i == 0 )
 	{
 		Com_Printf( "CL_GlobalServers_f: Error: could not resolve address of master %s\n", masteraddress );
@@ -4500,7 +4500,7 @@ static void CL_GlobalServers_f( void ) {
 	if ( to.type == NA_IP6 || to.type == NA_MULTICAST6 )
 	{
 		int v4enabled = Cvar_VariableIntegerValue( "net_enabled" ) & NET_ENABLEV4;
-		
+
 		if ( v4enabled )
 		{
 			Com_sprintf( command, sizeof( command ), "getserversExt %s %s",
@@ -4737,7 +4737,7 @@ static void CL_Ping_f( void ) {
 	pingptr->time  = 0;
 
 	CL_SetServerInfoByAddress( &pingptr->adr, NULL, 0 );
-		
+
 	NET_OutOfBandPrint( NS_CLIENT, &to, "getinfo xxx" );
 }
 
@@ -4876,11 +4876,11 @@ static void CL_ServerStatus_f( void ) {
 
 		toptr = &clc.serverAddress;
 	}
-	
+
 	if ( !toptr )
 	{
 		Com_Memset( &to, 0, sizeof( to ) );
-	
+
 		if ( argc == 2 )
 			server = Cmd_Argv(1);
 		else

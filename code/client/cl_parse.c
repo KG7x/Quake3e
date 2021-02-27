@@ -61,8 +61,7 @@ Parses deltas from the given base and adds the resulting entity
 to the current frame
 ==================
 */
-static void CL_DeltaEntity( msg_t *msg, clSnapshot_t *frame, int newnum, const entityState_t *old,
-					 qboolean unchanged) {
+static void CL_DeltaEntity( msg_t *msg, clSnapshot_t *frame, int newnum, const entityState_t *old, qboolean unchanged) {
 	entityState_t	*state;
 
 	// save the parsed entity state into the big circular buffer so
@@ -428,7 +427,7 @@ void CL_SystemInfoChanged( qboolean onlyGame ) {
 		if ( !Q_stricmp( key, "sv_referencedPaks" ) || !Q_stricmp( key, "sv_referencedPakNames" ) ) {
 			continue;
 		}
-		
+
 		if ( !Q_stricmp( key, "fs_game" ) ) {
 			continue; // already procesed
 		}
@@ -596,7 +595,7 @@ static void CL_ParseGamestate( msg_t *msg ) {
 	}
 
 	gamedirModified = ( Cvar_Flags( "fs_game" ) & CVAR_MODIFIED ) ? qtrue : qfalse;
-	
+
 	if ( !cl_oldGameSet && gamedirModified ) {
 		cl_oldGameSet = qtrue;
 		Q_strncpyz( cl_oldGame, oldGame, sizeof( cl_oldGame ) );
@@ -695,7 +694,7 @@ static void CL_ParseDownload( msg_t *msg ) {
 		Com_Error(ERR_DROP, "CL_ParseDownload: Invalid size %d for download chunk", size);
 		return;
 	}
-	
+
 	MSG_ReadData(msg, data, size);
 
 	if((clc.downloadBlock & 0xFFFF) != block)
@@ -705,9 +704,9 @@ static void CL_ParseDownload( msg_t *msg ) {
 	}
 
 	// open the file if not opened yet
-	if ( clc.download == FS_INVALID_HANDLE ) 
+	if ( clc.download == FS_INVALID_HANDLE )
 	{
-		if ( !CL_ValidPakSignature( data, size ) ) 
+		if ( !CL_ValidPakSignature( data, size ) )
 		{
 			Com_Printf( S_COLOR_YELLOW "Invalid pak signature for %s\n", clc.downloadName );
 			CL_AddReliableCommand( "stopdl", qfalse );
@@ -859,12 +858,12 @@ void CL_ParseServerMessage( msg_t *msg ) {
 				SHOWNET( msg, svc_strings[cmd] );
 			}
 		}
-	
+
 		// other commands
 		switch ( cmd ) {
 		default:
 			Com_Error (ERR_DROP,"CL_ParseServerMessage: Illegible server message");
-			break;			
+			break;
 		case svc_nop:
 			break;
 		case svc_serverCommand:

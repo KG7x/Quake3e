@@ -54,7 +54,7 @@ typedef struct {
 	int		vislines;		// in scanlines
 
 	int		times[NUM_CON_TIMES];	// cls.realtime time the line was generated
-								// for transparent notify lines
+									// for transparent notify lines
 	vec4_t	color;
 
 	int		viswidth;
@@ -64,15 +64,15 @@ typedef struct {
 
 } console_t;
 
-extern  qboolean    chat_team;
-extern  int         chat_playerNum;
+extern  qboolean	chat_team;
+extern  int			chat_playerNum;
 
 console_t	con;
 
 cvar_t		*con_conspeed;
 cvar_t		*con_notifytime;
 
-int         g_console_field_width = DEFAULT_CONSOLE_WIDTH;
+int			g_console_field_width = DEFAULT_CONSOLE_WIDTH;
 
 void		Con_Fixup( void );
 
@@ -179,7 +179,7 @@ static void Con_Clear_f( void ) {
 	Con_Bottom();		// go to end
 }
 
-						
+
 /*
 ================
 Con_Dump_f
@@ -256,7 +256,7 @@ static void Con_Dump_f( void )
 	FS_FCloseFile( f );
 }
 
-						
+
 /*
 ================
 Con_ClearNotify
@@ -264,7 +264,7 @@ Con_ClearNotify
 */
 void Con_ClearNotify( void ) {
 	int		i;
-	
+
 	for ( i = 0 ; i < NUM_CON_TIMES ; i++ ) {
 		con.times[i] = 0;
 	}
@@ -459,7 +459,7 @@ void Con_NewLine( void )
 	con.current++;
 
 	s = &con.text[ ( con.current % con.totallines ) * con.linewidth ];
-	for ( i = 0; i < con.linewidth ; i++ ) 
+	for ( i = 0; i < con.linewidth ; i++ )
 		*s++ = (ColorIndex(COLOR_WHITE)<<8) | ' ';
 
 	con.x = 0;
@@ -519,10 +519,10 @@ void CL_ConsolePrint( const char *txt ) {
 	if ( cl_noprint && cl_noprint->integer ) {
 		return;
 	}
-	
+
 	if ( !con.initialized ) {
-		con.color[0] = 
-		con.color[1] = 
+		con.color[0] =
+		con.color[1] =
 		con.color[2] =
 		con.color[3] = 1.0f;
 		con.viswidth = -9999;
@@ -901,7 +901,7 @@ void Con_RunConsole( void )
 		con.finalFrac = 0.5;	// half screen
 	else
 		con.finalFrac = 0.0;	// none visible
-	
+
 	// scroll towards the destination height
 	if ( con.finalFrac < con.displayFrac )
 	{
@@ -925,7 +925,7 @@ void Con_PageUp( int lines )
 		lines = con.vispage - 2;
 
 	con.display -= lines;
-	
+
 	Con_Fixup();
 }
 

@@ -272,13 +272,13 @@ typedef struct {
 
 typedef struct {
 	netadr_t	adr;
-	char	  	hostName[MAX_NAME_LENGTH];
-	char	  	mapName[MAX_NAME_LENGTH];
-	char	  	game[MAX_NAME_LENGTH];
+	char		hostName[MAX_NAME_LENGTH];
+	char		mapName[MAX_NAME_LENGTH];
+	char		game[MAX_NAME_LENGTH];
 	int			netType;
 	int			gameType;
-	int		  	clients;
-	int		  	maxClients;
+	int			clients;
+	int			maxClients;
 	int			minPing;
 	int			maxPing;
 	int			ping;
@@ -524,8 +524,7 @@ void	SCR_DebugGraph( float value );
 int		SCR_GetBigStringWidth( const char *str );	// returns in virtual 640x480 coordinates
 
 void	SCR_AdjustFrom640( float *x, float *y, float *w, float *h );
-void	SCR_FillRect( float x, float y, float width, float height, 
-					 const float *color );
+void	SCR_FillRect( float x, float y, float width, float height, const float *color );
 void	SCR_DrawPic( float x, float y, float width, float height, qhandle_t hShader );
 void	SCR_DrawNamedPic( float x, float y, float width, float height, const char *picname );
 

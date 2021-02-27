@@ -456,7 +456,7 @@ static FILE	*FS_FileForHandle( fileHandle_t f ) {
 	if ( ! fsh[f].handleFiles.file.o ) {
 		Com_Error( ERR_DROP, "FS_FileForHandle: NULL" );
 	}
-	
+
 	return fsh[f].handleFiles.file.o;
 }
 
@@ -557,7 +557,7 @@ char *FS_BuildOSPath( const char *base, const char *game, const char *qpath ) {
 	char	temp[MAX_OSPATH*2+1];
 	static char ospath[2][sizeof(temp)+MAX_OSPATH];
 	static int toggle;
-	
+
 	toggle ^= 1;		// flip-flop to allow two returns without clash
 
 	if( !game || !game[0] ) {
@@ -591,7 +591,7 @@ static qboolean FS_CheckDirTraversal( const char *checkdir )
 
 	if ( strstr( checkdir, "::" ) )
 		return qtrue;
-	
+
 	return qfalse;
 }
 
@@ -606,7 +606,7 @@ Creates any directories needed to store the given filename
 static qboolean FS_CreatePath( const char *OSPath ) {
 	char	path[MAX_OSPATH*2+1];
 	char	*ofs;
-	
+
 	// make absolutely sure that it can't back up the path
 	// FIXME: is c: allowed???
 	if ( FS_CheckDirTraversal( OSPath ) ) {
@@ -1201,7 +1201,7 @@ FS_ResetReadOnlyAttribute
 */
 qboolean FS_ResetReadOnlyAttribute( const char *filename ) {
 	char *ospath;
-	
+
 	ospath = FS_BuildOSPath( fs_homepath->string, fs_gamedir, filename );
 
 	return Sys_ResetReadOnlyAttribute( ospath );
@@ -1323,7 +1323,7 @@ Ignore case and seprator char distinctions
 */
 qboolean FS_FilenameCompare( const char *s1, const char *s2 ) {
 	int		c1, c2;
-	
+
 	do {
 		c1 = *s1++;
 		c2 = *s2++;
@@ -1342,7 +1342,7 @@ qboolean FS_FilenameCompare( const char *s1, const char *s2 ) {
 			return qtrue;		// strings not equal
 		}
 	} while ( c1 );
-	
+
 	return qfalse;		// strings are equal
 }
 
@@ -1423,7 +1423,7 @@ static qboolean FS_GeneralRef( const char *filename )
 
 	if ( FS_HasExt( filename, extList, ARRAY_LEN( extList ) ) )
 		return qfalse;
-	
+
 	if ( !Q_stricmp( filename, "vm/qagame.qvm" ) )
 		return qfalse;
 
@@ -1704,7 +1704,7 @@ void FS_TouchFileInPak( const char *filename ) {
 	fullHash = FS_HashFileName( filename, 0U );
 
 	for ( search = fs_searchpaths ; search ; search = search->next ) {
-		
+
 		// is the element a pak file?
 		if ( !search->pack )
 			continue;
@@ -2415,7 +2415,7 @@ static void FS_RemoveFromCache( pack_t *pack )
 	if ( !pack->next && !pack->prev && pakHashTable[ pack->namehash ] != pack )
 	{
 		Com_Error( ERR_FATAL, "Invalid pak link" );
-	} 
+	}
 
 	if ( pack->prev != NULL )
 		pack->prev->next = pack->next;
@@ -2538,7 +2538,7 @@ static qboolean FS_SavePackToFile( const pack_t *pak, FILE *f )
 	pk3cacheHeader_t pk;
 	pk3cacheFileItem_t it;
 	int namesLen, contentLen;
-	
+
 	namePtr = (char*)(pak->buildBuffer + pak->numfiles);
 
 	pakName = pak->pakFilename;
@@ -3073,7 +3073,7 @@ static pack_t *FS_LoadZipFile( const char *zipfile )
 		if ( file_info.compression_method != 0 && file_info.compression_method != 8 /*Z_DEFLATED*/ ) {
 			unzGoToNextFile( uf );
 			continue;
-		} 
+		}
 		if ( file_info.uncompressed_size > 0 ) {
 			fs_headerLongs[fs_numHeaderLongs++] = LittleLong( file_info.crc );
 		}
@@ -3168,12 +3168,12 @@ qboolean FS_CompareZipChecksum(const char *zipfile)
 {
 	pack_t *thepak;
 	int index, checksum;
-	
+
 	thepak = FS_LoadZipFile( zipfile );
-	
+
 	if ( !thepak )
 		return qfalse;
-	
+
 	checksum = thepak->checksum;
 #ifndef USE_PK3_CACHE
 	FS_FreePak(thepak);
@@ -3184,7 +3184,7 @@ qboolean FS_CompareZipChecksum(const char *zipfile)
 		if(checksum == fs_serverReferencedPaks[index])
 			return qtrue;
 	}
-	
+
 	return qfalse;
 }
 
@@ -3198,12 +3198,12 @@ int FS_GetZipChecksum( const char *zipfile )
 {
 	pack_t *pak;
 	int checksum;
-	
+
 	pak = FS_LoadZipFile( zipfile );
-	
+
 	if ( !pak )
 		return 0xFFFFFFFF;
-	
+
 	checksum = pak->checksum;
 #ifndef USE_PK3_CACHE
 	FS_FreePak( pak );
@@ -3453,7 +3453,7 @@ char **FS_ListFilteredFiles( const char *path, const char *extension, const char
 				nfiles = FS_AddFileToList( name, list, nfiles );
 			}
 			Sys_FreeFileList( sysFiles );
-		}		
+		}
 	}
 
 	// return a copy of the list
@@ -3837,7 +3837,7 @@ static int FS_PathCmp( const char *s1, const char *s2 ) {
 		if ( c2 == '\\' || c2 == ':' ) {
 			c2 = '/';
 		}
-		
+
 		if (c1 < c2) {
 			return -1;		// strings not equal
 		}
@@ -4094,7 +4094,7 @@ static void FS_AddGameDirectory( const char *path, const char *dir ) {
 			return;	// we've already got this one
 		}
 	}
-	
+
 	Q_strncpyz( fs_gamedir, dir, sizeof( fs_gamedir ) );
 
 	//
@@ -4343,9 +4343,9 @@ qboolean FS_ComparePaks( char *neededpaks, int len, qboolean dlstring ) {
 		// We need this to make sure we won't hit the end of the buffer or the server could
 		// overwrite non-pk3 files on clients by writing so much crap into neededpaks that
 		// Q_strcat cuts off the .pk3 extension.
-	
+
 		origpos += strlen(origpos);
-	
+
         // Remote name
         Q_strcat( neededpaks, len, "@");
         Q_strcat( neededpaks, len, fs_serverReferencedPakNames[i] );
@@ -4366,7 +4366,7 @@ qboolean FS_ComparePaks( char *neededpaks, int len, qboolean dlstring ) {
           Q_strcat( neededpaks, len, fs_serverReferencedPakNames[i] );
           Q_strcat( neededpaks, len, ".pk3" );
         }
-        
+
         // Find out whether it might have overflowed the buffer and don't add this file to the
         // list if that is the case.
         if(strlen(origpos) + (origpos - neededpaks) >= len - 1)
@@ -4526,13 +4526,13 @@ static void FS_ReorderPurePaks( void )
 	int i;
 	searchpath_t **p_insert_index, // for linked list reordering
 		**p_previous; // when doing the scan
-	
+
 	fs_reordered = qfalse;
 
 	// only relevant when connected to pure server
 	if ( !fs_numServerPaks )
 		return;
-	
+
 	p_insert_index = &fs_searchpaths; // we insert in order at the beginning of the list 
 	for ( i = 0 ; i < fs_numServerPaks ; i++ ) {
 		p_previous = p_insert_index; // track the pointer-to-current-item
@@ -4623,7 +4623,7 @@ qboolean FS_IsPureChecksum( int sum )
 
 	if ( fs_numPureChecksums == 0 )
 		return qtrue;
-	
+
 	for ( i = 0; i < fs_numPureChecksums; i++ )
 		if ( fs_pureChecksum[i] == sum )
 			return qtrue;
@@ -4658,7 +4658,7 @@ static void FS_Startup( void ) {
 
 	if ( !fs_basegame->string[0] )
 		Com_Error( ERR_FATAL, "* fs_basegame is not set *" );
-	
+
 	homePath = Sys_DefaultHomePath();
 	if ( !homePath || !homePath[0] ) {
 		homePath = fs_basepath->string;
@@ -5040,7 +5040,7 @@ const char *FS_ReferencedPakPureChecksums( int maxlen ) {
 	// last checksum is the encoded number of referenced pk3s
 	checksum ^= numPaks;
 	s = Q_stradd( s, va( "%i ", checksum ) );
-	if ( s > max ) { 
+	if ( s > max ) {
 		// client-side overflow
 		Com_Printf( S_COLOR_YELLOW "WARNING: pure checksum list is too long (%i), you might be not able to play on remote server!\n", (int)(s - info) );
 		*max = '\0';
@@ -5306,7 +5306,7 @@ void FS_InitFilesystem( void ) {
 #endif
 
 #ifdef _WIN32
- 	_setmaxstdio( 2048 );
+	_setmaxstdio( 2048 );
 #endif
 
 	// try to start up normally
@@ -5404,7 +5404,7 @@ qboolean FS_ConditionalRestart( int checksumFeed, qboolean clientRestart )
 	{
 		FS_ReorderPurePaks();
 	}
-	
+
 	return qfalse;
 }
 

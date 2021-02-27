@@ -249,7 +249,7 @@ static void CM_TestInLeaf( traceWork_t *tw, const cLeaf_t *leaf ) {
 		if ( !(b->contents & tw->contents)) {
 			continue;
 		}
-		
+
 		CM_TestBoxInBrush( tw, b );
 		if ( tw->trace.allsolid ) {
 			return;
@@ -275,7 +275,7 @@ static void CM_TestInLeaf( traceWork_t *tw, const cLeaf_t *leaf ) {
 			if ( !(patch->contents & tw->contents)) {
 				continue;
 			}
-			
+
 			if ( CM_PositionTestInPatchCollide( tw, patch->pc ) ) {
 				tw->trace.startsolid = tw->trace.allsolid = qtrue;
 				tw->trace.fraction = 0;
@@ -712,7 +712,7 @@ static void CM_TraceThroughLeaf( traceWork_t *tw, const cLeaf_t *leaf ) {
 			if ( !(patch->contents & tw->contents) ) {
 				continue;
 			}
-			
+
 			CM_TraceThroughPatch( tw, patch );
 			if ( !tw->trace.fraction ) {
 				return;
@@ -1107,7 +1107,7 @@ static void CM_TraceThroughTree( traceWork_t *tw, int num, float p1f, float p2f,
 	} else if ( frac > 1 ) {
 		frac = 1;
 	}
-		
+
 	midf = p1f + (p2f - p1f)*frac;
 
 	mid[0] = p1[0] + frac*(p2[0] - p1[0]);
@@ -1122,7 +1122,7 @@ static void CM_TraceThroughTree( traceWork_t *tw, int num, float p1f, float p2f,
 	} else if ( frac2 > 1 ) {
 		frac2 = 1;
 	}
-		
+
 	midf = p1f + (p2f - p1f)*frac2;
 
 	mid[0] = p1[0] + frac2*(p2[0] - p1[0]);

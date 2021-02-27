@@ -74,7 +74,7 @@ void GL_TextureMode( const char *string ) {
 	const textureMode_t *mode;
 	image_t	*img;
 	int		i;
-	
+
 	mode = NULL;
 	for ( i = 0 ; i < ARRAY_LEN( modes ) ; i++ ) {
 		if ( !Q_stricmp( modes[i].name, string ) ) {
@@ -239,8 +239,7 @@ If a larger shrinking is needed, use the mipmap function
 before or after.
 ================
 */
-static void ResampleTexture( unsigned *in, int inwidth, int inheight, unsigned *out,  
-							int outwidth, int outheight ) {
+static void ResampleTexture( unsigned *in, int inwidth, int inheight, unsigned *out, int outwidth, int outheight ) {
 	int		i, j;
 	unsigned	*inrow, *inrow2;
 	unsigned	frac, fracstep;
@@ -250,7 +249,7 @@ static void ResampleTexture( unsigned *in, int inwidth, int inheight, unsigned *
 
 	if ( outwidth > ARRAY_LEN( p1 ) )
 		ri.Error( ERR_DROP, "ResampleTexture: max width" );
-								
+
 	fracstep = inwidth * 0x10000 / outwidth;
 
 	frac = fracstep>>2;

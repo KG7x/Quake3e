@@ -89,7 +89,7 @@ void MSG_Copy(msg_t *buf, byte *data, int length, msg_t *src)
 =============================================================================
 
 bit functions
-  
+
 =============================================================================
 */
 
@@ -114,7 +114,7 @@ void MSG_WriteBits( msg_t *msg, int value, int bits ) {
 			msg->bit += 8;
 		} else if ( bits == 16 ) {
 			short temp = value;
-			
+
 			CopyLittleShort(&msg->data[msg->cursize], &temp);
 			msg->cursize += 2;
 			msg->bit += 16;
@@ -285,7 +285,7 @@ void MSG_WriteString( msg_t *sb, const char *s ) {
 	l = s ? strlen( s ) : 0;
 	if ( l >= MAX_STRING_CHARS ) {
 		Com_Printf( "MSG_WriteString: MAX_STRING_CHARS\n" );
-		l = 0; 
+		l = 0;
 	}
 
 	for ( i = 0 ; i < l; i++ ) {
@@ -307,7 +307,7 @@ void MSG_WriteBigString( msg_t *sb, const char *s ) {
 	l = s ? strlen( s ) : 0;
 	if ( l >= BIG_INFO_STRING ) {
 		Com_Printf( "MSG_WriteBigString: BIG_INFO_STRING\n" );
-		l = 0; 
+		l = 0;
 	}
 
 	for ( i = 0 ; i < l ; i++ ) {
@@ -340,18 +340,18 @@ void MSG_WriteAngle16( msg_t *sb, float f ) {
 // returns -1 if no more characters are available
 int MSG_ReadChar (msg_t *msg ) {
 	int	c;
-	
+
 	c = (signed char)MSG_ReadBits( msg, 8 );
 	if ( msg->readcount > msg->cursize ) {
 		c = -1;
-	}	
-	
+	}
+
 	return c;
 }
 
 int MSG_ReadByte( msg_t *msg ) {
 	int	c;
-	
+
 	c = (unsigned char)MSG_ReadBits( msg, 8 );
 	if ( msg->readcount > msg->cursize ) {
 		c = -1;
@@ -361,42 +361,42 @@ int MSG_ReadByte( msg_t *msg ) {
 
 int MSG_ReadShort( msg_t *msg ) {
 	int	c;
-	
+
 	c = (short)MSG_ReadBits( msg, 16 );
 	if ( msg->readcount > msg->cursize ) {
 		c = -1;
-	}	
+	}
 
 	return c;
 }
 
 int MSG_ReadLong( msg_t *msg ) {
 	int	c;
-	
+
 	c = MSG_ReadBits( msg, 32 );
 	if ( msg->readcount > msg->cursize ) {
 		c = -1;
-	}	
-	
+	}
+
 	return c;
 }
 
 float MSG_ReadFloat( msg_t *msg ) {
 	floatint_t dat;
-	
+
 	dat.i = MSG_ReadBits( msg, 32 );
 	if ( msg->readcount > msg->cursize ) {
 		dat.f = -1;
-	}	
-	
-	return dat.f;	
+	}
+
+	return dat.f;
 }
 
 
 const char *MSG_ReadString( msg_t *msg ) {
 	static char	string[MAX_STRING_CHARS];
 	int	l, c;
-	
+
 	l = 0;
 	do {
 		c = MSG_ReadByte( msg ); // use ReadByte so -1 is out of bounds
@@ -413,9 +413,9 @@ const char *MSG_ReadString( msg_t *msg ) {
 		}
 		string[ l++ ] = c;
 	} while ( qtrue );
-	
+
 	string[ l ] = '\0';
-	
+
 	return string;
 }
 
@@ -423,7 +423,7 @@ const char *MSG_ReadString( msg_t *msg ) {
 const char *MSG_ReadBigString( msg_t *msg ) {
 	static char	string[ BIG_INFO_STRING ];
 	int	l, c;
-	
+
 	l = 0;
 	do {
 		c = MSG_ReadByte( msg ); // use ReadByte so -1 is out of bounds
@@ -440,9 +440,9 @@ const char *MSG_ReadBigString( msg_t *msg ) {
 		}
 		string[ l++ ] = c;
 	} while ( qtrue );
-	
+
 	string[ l ] = '\0';
-	
+
 	return string;
 }
 
@@ -467,9 +467,9 @@ const char *MSG_ReadStringLine( msg_t *msg ) {
 		}
 		string[ l++ ] = c;
 	} while ( qtrue );
-	
+
 	string[ l ] = '\0';
-	
+
 	return string;
 }
 
@@ -521,13 +521,13 @@ delta functions with keys
 
 static const int kbitmask[32] = {
 	0x00000001, 0x00000003, 0x00000007, 0x0000000F,
-	0x0000001F,	0x0000003F,	0x0000007F,	0x000000FF,
-	0x000001FF,	0x000003FF,	0x000007FF,	0x00000FFF,
-	0x00001FFF,	0x00003FFF,	0x00007FFF,	0x0000FFFF,
-	0x0001FFFF,	0x0003FFFF,	0x0007FFFF,	0x000FFFFF,
-	0x001FFFFf,	0x003FFFFF,	0x007FFFFF,	0x00FFFFFF,
-	0x01FFFFFF,	0x03FFFFFF,	0x07FFFFFF,	0x0FFFFFFF,
-	0x1FFFFFFF,	0x3FFFFFFF,	0x7FFFFFFF,	0xFFFFFFFF,
+	0x0000001F, 0x0000003F, 0x0000007F, 0x000000FF,
+	0x000001FF, 0x000003FF, 0x000007FF, 0x00000FFF,
+	0x00001FFF, 0x00003FFF, 0x00007FFF, 0x0000FFFF,
+	0x0001FFFF, 0x0003FFFF, 0x0007FFFF, 0x000FFFFF,
+	0x001FFFFf, 0x003FFFFF, 0x007FFFFF, 0x00FFFFFF,
+	0x01FFFFFF, 0x03FFFFFF, 0x07FFFFFF, 0x0FFFFFFF,
+	0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF,
 };
 
 
@@ -987,7 +987,7 @@ plyer_state_t communication
 
 netField_t	playerStateFields[] = 
 {
-{ PSF(commandTime), 32 },				
+{ PSF(commandTime), 32 },
 { PSF(origin[0]), 0 },
 { PSF(origin[1]), 0 },
 { PSF(bobCycle), 8 },
@@ -1021,7 +1021,7 @@ netField_t	playerStateFields[] =
 { PSF(damagePitch), 8 },
 { PSF(damageCount), 8 },
 { PSF(generic1), 8 },
-{ PSF(pm_type), 8 },					
+{ PSF(pm_type), 8 },
 { PSF(delta_angles[0]), 16 },
 { PSF(delta_angles[2]), 16 },
 { PSF(torsoTimer), 12 },

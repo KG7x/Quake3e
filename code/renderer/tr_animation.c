@@ -46,7 +46,7 @@ static int R_MDRCullModel( mdrHeader_t *header, trRefEntity_t *ent ) {
 	int			i, frameSize;
 
 	frameSize = (size_t)( &((mdrFrame_t *)0)->bones[ header->numBones ] );
-	
+
 	// compute frame pointers
 	newFrame = ( mdrFrame_t * ) ( ( byte * ) header + header->ofsFrames + frameSize * ent->e.frame);
 	oldFrame = ( mdrFrame_t * ) ( ( byte * ) header + header->ofsFrames + frameSize * ent->e.oldframe);
@@ -60,7 +60,7 @@ static int R_MDRCullModel( mdrHeader_t *header, trRefEntity_t *ent ) {
 			{
 				// Ummm... yeah yeah I know we don't really have an md3 here.. but we pretend
 				// we do. After all, the purpose of mdrs are not that different, are they?
-				
+
 				case CULL_OUT:
 					tr.pc.c_sphere_cull_md3_out++;
 					return CULL_OUT;
@@ -104,7 +104,7 @@ static int R_MDRCullModel( mdrHeader_t *header, trRefEntity_t *ent ) {
 			}
 		}
 	}
-	
+
 	// calculate a bounding box in the current coordinate system
 	for (i = 0 ; i < 3 ; i++) {
 		bounds[0][i] = oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
@@ -142,7 +142,7 @@ int R_MDRComputeFogNum( mdrHeader_t *header, trRefEntity_t *ent ) {
 	if ( tr.refdef.rdflags & RDF_NOWORLDMODEL ) {
 		return 0;
 	}
-	
+
 	frameSize = (size_t)( &((mdrFrame_t *)0)->bones[ header->numBones ] );
 
 	// FIXME: non-normalized axis issues
@@ -236,7 +236,7 @@ void R_MDRAddAnimSurfaces( trRefEntity_t *ent ) {
 	{
 		lod = (mdrLOD_t *) ((byte *) lod + lod->ofsEnd);
 	}
-	
+
 	// set up lighting
 	if ( !personalModel || r_shadows->integer > 1 )
 	{
@@ -250,7 +250,7 @@ void R_MDRAddAnimSurfaces( trRefEntity_t *ent ) {
 
 	for ( i = 0 ; i < lod->numSurfaces ; i++ )
 	{
-		
+
 		if(ent->e.customShader)
 			shader = R_GetShaderByHandle(ent->e.customShader);
 		else if(ent->e.customSkin > 0 && ent->e.customSkin < tr.numSkins)
@@ -354,7 +354,7 @@ void RB_MDRSurfaceAnim( mdrSurface_t *surface )
 	indexes		= surface->numTriangles * 3;
 	baseIndex	= tess.numIndexes;
 	baseVertex	= tess.numVertexes;
-	
+
 	// Set up all triangles.
 	for (j = 0 ; j < indexes ; j++) 
 	{
@@ -373,7 +373,7 @@ void RB_MDRSurfaceAnim( mdrSurface_t *surface )
 	else 
 	{
 		bonePtr = bones;
-		
+
 		for ( i = 0 ; i < header->numBones*12 ; i++ ) 
 		{
 			((float *)bonePtr)[i] = frontlerp * ((float *)frame->bones)[i] + backlerp * ((float *)oldFrame->bones)[i];
@@ -396,7 +396,7 @@ void RB_MDRSurfaceAnim( mdrSurface_t *surface )
 		for ( k = 0 ; k < v->numWeights ; k++, w++ ) 
 		{
 			bone = bonePtr + w->boneIndex;
-			
+
 			tempVert[0] += w->boneWeight * ( DotProduct( bone->matrix[0], w->offset ) + bone->matrix[0][3] );
 			tempVert[1] += w->boneWeight * ( DotProduct( bone->matrix[1], w->offset ) + bone->matrix[1][3] );
 			tempVert[2] += w->boneWeight * ( DotProduct( bone->matrix[2], w->offset ) + bone->matrix[2][3] );

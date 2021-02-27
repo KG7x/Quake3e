@@ -67,9 +67,9 @@ Netchan_Init
 */
 void Netchan_Init( int port ) {
 	port &= 0xffff;
-	showpackets = Cvar_Get ("showpackets", "0", CVAR_TEMP );
-	showdrop = Cvar_Get ("showdrop", "0", CVAR_TEMP );
-	qport = Cvar_Get ("net_qport", va("%i", port), CVAR_INIT );
+	showpackets = Cvar_Get( "showpackets", "0", CVAR_TEMP );
+	showdrop = Cvar_Get( "showdrop", "0", CVAR_TEMP );
+	qport = Cvar_Get( "net_qport", va("%i", port), CVAR_INIT );
 }
 
 
@@ -83,7 +83,7 @@ called to open a channel to a remote system
 void Netchan_Setup( netsrc_t sock, netchan_t *chan, const netadr_t *adr, int port, int challenge, qboolean compat )
 {
 	Com_Memset (chan, 0, sizeof(*chan));
-	
+
 	chan->sock = sock;
 	chan->remoteAddress = *adr;
 	chan->qport = port;
@@ -315,7 +315,7 @@ qboolean Netchan_Process( netchan_t *chan, msg_t *msg ) {
 			, sequence );
 		}
 	}
-	
+
 
 	//
 	// if this is the final framgent of a reliable message,
@@ -526,7 +526,7 @@ void NET_FlushPacketQueue( void )
 void NET_SendPacket( netsrc_t sock, int length, const void *data, const netadr_t *to ) {
 
 	// sequenced packets are shown in netchan, so just show oob
-	if ( showpackets->integer && *(int *)data == -1 )	{
+	if ( showpackets->integer && *(int *)data == -1 ) {
 		Com_Printf ("send packet %4i\n", length);
 	}
 
@@ -633,7 +633,7 @@ int NET_StringToAdr( const char *s, netadr_t *a, netadrtype_t family )
 	}
 
 	Q_strncpyz( base, s, sizeof( base ) );
-	
+
 	if(*base == '[' || Q_CountChar(base, ':') > 1)
 	{
 		// This is an ipv6 address, handle it specially.
@@ -646,7 +646,7 @@ int NET_StringToAdr( const char *s, netadr_t *a, netadrtype_t family )
 			if(*search == ':')
 				port = search + 1;
 		}
-		
+
 		if(*base == '[')
 			search = base + 1;
 		else
@@ -661,7 +661,7 @@ int NET_StringToAdr( const char *s, netadr_t *a, netadrtype_t family )
 			*port = '\0';
 			port++;
 		}
-		
+
 		search = base;
 	}
 

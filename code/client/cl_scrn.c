@@ -228,8 +228,7 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void SCR_DrawStringExt( int x, int y, float size, const char *string, const float *setColor, qboolean forceColor,
-		qboolean noColorEscape ) {
+void SCR_DrawStringExt( int x, int y, float size, const char *string, const float *setColor, qboolean forceColor, qboolean noColorEscape ) {
 	vec4_t		color;
 	const char	*s;
 	int			xx;
@@ -297,8 +296,7 @@ Draws a multi-colored string with a drop shadow, optionally forcing
 to a fixed color.
 ==================
 */
-void SCR_DrawSmallStringExt( int x, int y, const char *string, const float *setColor, qboolean forceColor,
-		qboolean noColorEscape ) {
+void SCR_DrawSmallStringExt( int x, int y, const char *string, const float *setColor, qboolean forceColor, qboolean noColorEscape ) {
 	vec4_t		color;
 	const char	*s;
 	int			xx;
@@ -485,11 +483,11 @@ SCR_Init
 ==================
 */
 void SCR_Init( void ) {
-	cl_timegraph = Cvar_Get ("timegraph", "0", CVAR_CHEAT);
-	cl_debuggraph = Cvar_Get ("debuggraph", "0", CVAR_CHEAT);
-	cl_graphheight = Cvar_Get ("graphheight", "32", CVAR_CHEAT);
-	cl_graphscale = Cvar_Get ("graphscale", "1", CVAR_CHEAT);
-	cl_graphshift = Cvar_Get ("graphshift", "0", CVAR_CHEAT);
+	cl_timegraph = Cvar_Get( "timegraph", "0", CVAR_CHEAT );
+	cl_debuggraph = Cvar_Get( "debuggraph", "0", CVAR_CHEAT );
+	cl_graphheight = Cvar_Get( "graphheight", "32", CVAR_CHEAT );
+	cl_graphscale = Cvar_Get( "graphscale", "1", CVAR_CHEAT );
+	cl_graphshift = Cvar_Get( "graphshift", "0", CVAR_CHEAT );
 
 	scr_initialized = qtrue;
 }

@@ -57,7 +57,7 @@ void S_WriteLinearBlastStereo16_SSE( void );
 
 #ifdef _WIN32
 
-void S_WriteLinearBlastStereo16_MMX( void ) 
+void S_WriteLinearBlastStereo16_MMX( void )
 {
 __asm {
 	push ebx
@@ -74,7 +74,7 @@ __asm {
 	and ecx,3
 	jnz LTail
 	shr ecx,2
-	not ecx		
+	not ecx
 	add ecx,17
 LClamp1:
 	mov eax,[esi]
@@ -150,7 +150,7 @@ LClampDone2:
 	dec ebx
 	jnz	LClamp2
 LEnd:
-    emms
+	emms
 LExit:
 	pop edi
 	pop esi
@@ -159,7 +159,7 @@ LExit:
 }
 
 
-void S_WriteLinearBlastStereo16_SSE( void ) 
+void S_WriteLinearBlastStereo16_SSE( void )
 {
 __asm {
 	push ebx
@@ -176,7 +176,7 @@ __asm {
 	and ecx,3
 	jnz LTail
 	shr ecx,2
-	not ecx		
+	not ecx
 	add ecx,17
 LClamp1:
 	mov eax,[esi]
@@ -512,7 +512,7 @@ static void S_PaintChannelFrom16_scalar( channel_t *ch, const sfx_t *sc, int cou
 }
 
 
-static void S_PaintChannelFrom16( channel_t *ch, const sfx_t *sc, int count, int sampleOffset, int bufferOffset ) 
+static void S_PaintChannelFrom16( channel_t *ch, const sfx_t *sc, int count, int sampleOffset, int bufferOffset )
 {
 	S_PaintChannelFrom16_scalar( ch, sc, count, sampleOffset, bufferOffset );
 }

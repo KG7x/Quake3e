@@ -99,7 +99,7 @@ static void Field_VariableSizeDraw( field_t *edit, int x, int y, int width, int 
 		for ( i = 0; i < prestep + 1; i++, s++ ) {
 			if ( Q_IsColorString( s ) ) {
 				curColor = *(s+1);
-				s++;						
+				s++;
 			}
 		}
 		// scroll marker
@@ -648,11 +648,11 @@ static void CL_KeyDownEvent( int key, unsigned time )
 	} else if ( Key_GetCatcher( ) & KEYCATCH_UI ) {
 		if ( uivm ) {
 			VM_Call( uivm, 2, UI_KEY_EVENT, key, qtrue );
-		} 
+		}
 	} else if ( Key_GetCatcher( ) & KEYCATCH_CGAME ) {
 		if ( cgvm ) {
 			VM_Call( cgvm, 2, CG_KEY_EVENT, key, qtrue );
-		} 
+		}
 	} else if ( Key_GetCatcher( ) & KEYCATCH_MESSAGE ) {
 		Message_Key( key );
 	} else if ( cls.state == CA_DISCONNECTED ) {

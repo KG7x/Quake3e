@@ -149,10 +149,10 @@ void GL_Cull( cullType_t cullType ) {
 
 	glState.faceCulling = cullType;
 
-	if ( cullType == CT_TWO_SIDED ) 
+	if ( cullType == CT_TWO_SIDED )
 	{
 		qglDisable( GL_CULL_FACE );
-	} 
+	}
 	else 
 	{
 		qboolean cullFront;
@@ -628,7 +628,7 @@ static void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 				if ( backEnd.currentEntity->e.renderfx & RF_DEPTHHACK ) {
 					// hack the depth range to prevent view model from poking into walls
 					depthRange = qtrue;
-					
+
 					if(backEnd.currentEntity->e.renderfx & RF_CROSSHAIR)
 						isCrosshair = qtrue;
 				}
@@ -1397,7 +1397,7 @@ static const void *RB_ColorMask( const void *data )
 	const colorMaskCommand_t *cmd = data;
 
 	qglColorMask( cmd->rgba[0], cmd->rgba[1], cmd->rgba[2], cmd->rgba[3] );
-	
+
 	return (const void *)(cmd + 1);
 }
 
@@ -1410,7 +1410,7 @@ RB_ClearDepth
 static const void *RB_ClearDepth( const void *data )
 {
 	const clearDepthCommand_t *cmd = data;
-	
+
 	RB_EndSurface();
 
 	qglClear( GL_DEPTH_BUFFER_BIT );

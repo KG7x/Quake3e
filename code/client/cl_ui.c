@@ -61,7 +61,7 @@ void LAN_LoadCachedServers( void ) {
 			FS_FCloseFile( fileIn );
 		}
 		return;
-	} 
+	}
 
 	FS_Read( &cls.numglobalservers, sizeof(int), fileIn );
 	FS_Read( &cls.numfavoriteservers, sizeof(int), fileIn );
@@ -85,7 +85,6 @@ LAN_SaveServersToCache
 ====================
 */
 void LAN_SaveServersToCache( void ) {
-	
 	fileHandle_t fileOut;
 	int size;
 
@@ -725,7 +724,7 @@ static int GetConfigString(int index, char *buf, int size)
 	}
 
 	Q_strncpyz( buf, cl.gameState.stringData+offset, size);
- 
+
 	return qtrue;
 }
 

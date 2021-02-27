@@ -223,7 +223,7 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 				logfile = FS_FOpenFileAppend( "qconsole.log" );
 			else
 				logfile = FS_FOpenFileWrite( "qconsole.log" );
-			
+
 			if ( logfile != FS_INVALID_HANDLE )
 			{
 				Com_Printf( "logfile opened on %s\n", asctime( newtime ) );
@@ -260,7 +260,7 @@ A Com_Printf that only shows up if the "developer" cvar is set
 void QDECL Com_DPrintf( const char *fmt, ...) {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
-		
+
 	if ( !com_developer || !com_developer->integer ) {
 		return;			// don't confuse non-developers with techie stuff...
 	}
@@ -299,7 +299,7 @@ void QDECL Com_Error( errorParm_t code, const char *fmt, ... ) {
 	if(com_errorEntered)
 	{
 		if(!calledSysError)
-        {
+		{
 			calledSysError = qtrue;
 			Sys_Error("recursive error after: %s", com_errorMessage);
 		}
@@ -367,7 +367,7 @@ void QDECL Com_Error( errorParm_t code, const char *fmt, ... ) {
 		CL_FlushMemory();
 #endif
 		VM_Forced_Unload_Done();
-		
+
 		FS_PureServerSetLoadedPaks( "", "" );
 		com_errorEntered = qfalse;
 
@@ -509,7 +509,7 @@ qboolean Com_EarlyParseCmdLine( char *commandLine, char *con_title, int title_si
 {
 	int		flags = 0;
 	int		i;
-	
+
 	*con_title = '\0';
 	Com_ParseCommandLine( commandLine );
 
@@ -1134,11 +1134,11 @@ static freeblock_t *NewBlock( memzone_t *zone, int size )
 	memblock_t *prev, *next;
 	memblock_t *block, *sep;
 	int alloc_size;
-	
+
 	// zone->prev is pointing on last block in the list
 	prev = zone->blocklist.prev;
 	next = prev->next;
-	
+
 	size = PAD( size, 1<<21 ); // round up to 2M blocks
 	// allocate separator block before new free block
 	alloc_size = size + sizeof( *sep );
@@ -1502,7 +1502,7 @@ void *Z_TagMalloc( int size, memtag_t tag ) {
 
 #ifdef USE_MULTI_SEGMENT
 	base = SearchFree( zone, size );
-	
+
 	RemoveFree( base );
 #else
 
@@ -1881,7 +1881,7 @@ static void Zone_Stats( const char *name, const memzone_t *z, qboolean printDeta
 	zone = z;
 	st.zoneSegments = 1;
 	st.freeSmallest = 0x7FFFFFFF;
-	
+
 	//if ( printDetails ) {
 	//	Com_Printf( "---------- %s zone segment #%i ----------\n", name, zone->segnum );
 	//}
@@ -2715,7 +2715,7 @@ Com_GetRealEvent
 =================
 */
 static sysEvent_t Com_GetRealEvent( void ) {
-	
+
 	// get or save an event from/to the journal file
 	if ( com_journalFile != FS_INVALID_HANDLE ) {
 		int			r;
@@ -3066,17 +3066,17 @@ void Com_GameRestart( int checksumFeed, qboolean clientRestart )
 #endif
 
 		FS_Restart( checksumFeed );
-	
+
 		// Load new configuration
 		Com_ExecuteCfg();
-	
+
 #ifndef DEDICATED
 		// Restart sound subsystem so old handles are flushed
 		//CL_Snd_Restart();
 		if ( clientRestart )
 			CL_StartHunkUsers();
 #endif
-		
+
 		com_gameRestarting = qfalse;
 	}
 }
@@ -3473,7 +3473,7 @@ void Sys_SnapVector( float *vector )
 
 	mxcsr = _mm_getcsr();
 	vf0 = _mm_setr_ps( vector[0], vector[1], vector[2], 0.0f );
-	
+
 	_mm_setcsr( mxcsr & ~0x6000 ); // enforce rounding mode to "round to nearest"
 
 	vi = _mm_cvtps_epi32( vf0 );
@@ -3681,7 +3681,7 @@ void Com_Init( char *commandLine ) {
 	com_affinityMask->modified = qfalse;
 #endif
 
-	com_blood = Cvar_Get ("com_blood", "1", CVAR_ARCHIVE_ND );
+	com_blood = Cvar_Get( "com_blood", "1", CVAR_ARCHIVE_ND );
 
 	com_logfile = Cvar_Get( "logfile", "0", CVAR_TEMP );
 	Cvar_CheckRange( com_logfile, "0", "4", CV_INTEGER );
@@ -3694,23 +3694,23 @@ void Com_Init( char *commandLine ) {
 
 	com_timescale = Cvar_Get( "timescale", "1", CVAR_CHEAT | CVAR_SYSTEMINFO );
 	Cvar_CheckRange( com_timescale, "0", NULL, CV_FLOAT );
-	com_fixedtime = Cvar_Get ("fixedtime", "0", CVAR_CHEAT);
-	com_showtrace = Cvar_Get ("com_showtrace", "0", CVAR_CHEAT);
+	com_fixedtime = Cvar_Get( "fixedtime", "0", CVAR_CHEAT );
+	com_showtrace = Cvar_Get( "com_showtrace", "0", CVAR_CHEAT );
 	com_viewlog = Cvar_Get( "viewlog", "0", 0 );
-	com_speeds = Cvar_Get ("com_speeds", "0", 0);
-	com_cameraMode = Cvar_Get ("com_cameraMode", "0", CVAR_CHEAT);
+	com_speeds = Cvar_Get( "com_speeds", "0", 0 );
+	com_cameraMode = Cvar_Get( "com_cameraMode", "0", CVAR_CHEAT );
 
 #ifndef DEDICATED	
 	com_timedemo = Cvar_Get( "timedemo", "0", 0 );
 	Cvar_CheckRange( com_timedemo, "0", "1", CV_INTEGER );
-	cl_paused = Cvar_Get ("cl_paused", "0", CVAR_ROM);
-	cl_packetdelay = Cvar_Get ("cl_packetdelay", "0", CVAR_CHEAT);
-	com_cl_running = Cvar_Get ("cl_running", "0", CVAR_ROM);
+	cl_paused = Cvar_Get( "cl_paused", "0", CVAR_ROM );
+	cl_packetdelay = Cvar_Get( "cl_packetdelay", "0", CVAR_CHEAT );
+	com_cl_running = Cvar_Get( "cl_running", "0", CVAR_ROM );
 #endif
 
-	sv_paused = Cvar_Get ("sv_paused", "0", CVAR_ROM);
-	sv_packetdelay = Cvar_Get ("sv_packetdelay", "0", CVAR_CHEAT);
-	com_sv_running = Cvar_Get ("sv_running", "0", CVAR_ROM);
+	sv_paused = Cvar_Get( "sv_paused", "0", CVAR_ROM );
+	sv_packetdelay = Cvar_Get( "sv_packetdelay", "0", CVAR_CHEAT );
+	com_sv_running = Cvar_Get( "sv_running", "0", CVAR_ROM );
 
 	com_buildScript = Cvar_Get( "com_buildScript", "0", 0 );
 
@@ -3926,7 +3926,7 @@ static int Com_ModifyMsec( int msec ) {
 	} else if (com_cameraMode->integer) {
 		msec *= com_timescale->value;
 	}
-	
+
 	// don't let it scale below 1 msec
 	if ( msec < 1 && com_timescale->value) {
 		msec = 1;
@@ -4065,7 +4065,7 @@ void Com_Frame( qboolean noDelay ) {
 
 			timeVal = com_frameTime - lastTime;
 			bias += timeVal - minMsec;
-			
+
 			if ( bias > minMsec )
 				bias = minMsec;
 
@@ -4204,7 +4204,7 @@ void Com_Frame( qboolean noDelay ) {
 	// trace optimization tracking
 	//
 	if ( com_showtrace->integer ) {
-	
+
 		extern	int c_traces, c_brush_traces, c_patch_traces;
 		extern	int	c_pointcontents;
 
@@ -4437,7 +4437,7 @@ void Field_CompleteKeyBind( int key )
 		//vlen = sizeof( completionField->buffer ) - 1 - blen;
 		return;	
 	}
-	
+
 	memcpy( completionField->buffer + blen, value, vlen + 1 );
 	completionField->cursor = blen + vlen;
 

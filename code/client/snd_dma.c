@@ -72,7 +72,7 @@ static vec3_t		listener_origin;
 static vec3_t		listener_axis[3];
 
 int			s_soundtime;		// sample PAIRS
-int   		s_paintedtime; 		// sample PAIRS
+int			s_paintedtime;		// sample PAIRS
 
 // MAX_SFX may be larger than MAX_SOUNDS because
 // of custom player sounds
@@ -276,7 +276,7 @@ static sfx_t *S_FindName( const char *name ) {
 		}
 		s_numSfx++;
 	}
-	
+
 	sfx = &s_knownSfx[i];
 	Com_Memset (sfx, 0, sizeof(*sfx));
 	strcpy (sfx->soundName, name);
@@ -399,7 +399,7 @@ static void S_SpatializeOrigin( const vec3_t origin, int master_vol, int *left_v
 	vec3_t	vec;
 
 	const float dist_mult = SOUND_ATTENUATE;
-	
+
 	// calculate stereo separation and distance attenuation
 	VectorSubtract(origin, listener_origin, source_vec);
 
@@ -408,7 +408,7 @@ static void S_SpatializeOrigin( const vec3_t origin, int master_vol, int *left_v
 	if (dist < 0)
 		dist = 0;			// close enough to be at full volume
 	dist *= dist_mult;		// different attenuation levels
-	
+
 	VectorRotate( source_vec, listener_axis, vec );
 
 	dot = -vec[1];
@@ -520,7 +520,7 @@ static void S_Base_StartSound( const vec3_t origin, int entityNum, int entchanne
 
 	ch = s_channels;
 	inplay = 0;
-	for ( i = 0; i < MAX_CHANNELS ; i++, ch++ ) {		
+	for ( i = 0; i < MAX_CHANNELS ; i++, ch++ ) {
 		if ( ch->entnum == entityNum && ch->thesfx == sfx ) {
 			if ( time - ch->allocTime < 20 ) {
 				Com_DPrintf(S_COLOR_YELLOW "S_StartSound: Double start (%d ms < 20 ms) for %s\n", time - ch->allocTime, sfx->soundName);
@@ -862,14 +862,14 @@ void S_AddLoopSounds (void) {
 
 		// allocate a channel
 		ch = &loop_channels[numLoopChannels];
-		
+
 		if (left_total > 255) {
 			left_total = 255;
 		}
 		if (right_total > 255) {
 			right_total = 255;
 		}
-		
+
 		ch->master_vol = MASTER_VOL;
 		ch->leftvol = left_total;
 		ch->rightvol = right_total;
@@ -886,7 +886,7 @@ void S_AddLoopSounds (void) {
 
 //=============================================================================
 
-portable_samplepair_t *S_GetRawSamplePointer( void ) 
+portable_samplepair_t *S_GetRawSamplePointer( void )
 {
 	return s_rawsamples;
 }

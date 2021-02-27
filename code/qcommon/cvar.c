@@ -101,7 +101,7 @@ static cvar_t *Cvar_FindVar( const char *var_name ) {
 		return NULL;
 
 	hash = generateHashValue( var_name );
-	
+
 	for ( var = hashTable[ hash ] ; var ; var = var->hashNext ) {
 		if ( !Q_stricmp( var_name, var->name ) ) {
 			return var;
@@ -119,7 +119,7 @@ Cvar_VariableValue
 */
 float Cvar_VariableValue( const char *var_name ) {
 	cvar_t	*var;
-	
+
 	var = Cvar_FindVar (var_name);
 	if (!var)
 		return 0;
@@ -134,7 +134,7 @@ Cvar_VariableIntegerValue
 */
 int Cvar_VariableIntegerValue( const char *var_name ) {
 	cvar_t	*var;
-	
+
 	var = Cvar_FindVar (var_name);
 	if (!var)
 		return 0;
@@ -149,7 +149,7 @@ Cvar_VariableString
 */
 const char *Cvar_VariableString( const char *var_name ) {
 	cvar_t *var;
-	
+
 	var = Cvar_FindVar (var_name);
 	if (!var)
 		return "";
@@ -164,7 +164,7 @@ Cvar_VariableStringBuffer
 */
 void Cvar_VariableStringBuffer( const char *var_name, char *buffer, int bufsize ) {
 	cvar_t *var;
-	
+
 	var = Cvar_FindVar (var_name);
 	if (!var) {
 		*buffer = '\0';
@@ -182,7 +182,7 @@ Cvar_VariableStringBufferSafe
 */
 void Cvar_VariableStringBufferSafe( const char *var_name, char *buffer, int bufsize, int flag ) {
 	cvar_t *var;
-	
+
 	var = Cvar_FindVar( var_name );
 	if ( !var || var->flags & flag ) {
 		*buffer = '\0';
@@ -201,7 +201,7 @@ Cvar_Flags
 int Cvar_Flags(const char *var_name)
 {
 	cvar_t *var;
-	
+
 	if( (var = Cvar_FindVar(var_name)) == NULL )
 		return CVAR_NONEXISTENT;
 	else
@@ -222,7 +222,7 @@ Cvar_CommandCompletion
 void Cvar_CommandCompletion(void (*callback)(const char *s))
 {
 	cvar_t		*cvar;
-	
+
 	for(cvar = cvar_vars; cvar; cvar = cvar->next)
 	{
 		if(cvar->name)
@@ -367,7 +367,7 @@ cvar_t *Cvar_Get( const char *var_name, const char *var_value, int flags ) {
 #endif
 
 	var = Cvar_FindVar (var_name);
-	
+
 	if(var)
 	{
 		var_value = Cvar_Validate(var, var_value, qfalse);
@@ -403,7 +403,7 @@ cvar_t *Cvar_Get( const char *var_name, const char *var_value, int flags ) {
 				var->latchedString = CopyString(var_value);
 			}
 		}
-		
+
 		// Make sure servers cannot mark engine-added variables as SERVER_CREATED
 		if(var->flags & CVAR_SERVER_CREATED)
 		{
@@ -415,7 +415,7 @@ cvar_t *Cvar_Get( const char *var_name, const char *var_value, int flags ) {
 			if(flags & CVAR_SERVER_CREATED)
 				flags &= ~CVAR_SERVER_CREATED;
 		}
-		
+
 		var->flags |= flags;
 
 		// only allow one non-empty reset string without a warning
@@ -463,12 +463,12 @@ cvar_t *Cvar_Get( const char *var_name, const char *var_value, int flags ) {
 
 		return NULL;
 	}
-	
+
 	var = &cvar_indexes[index];
-	
+
 	if(index >= cvar_numIndexes)
 		cvar_numIndexes = index + 1;
-		
+
 	var->name = CopyString( var_name );
 	var->string = CopyString( var_value );
 	var->modified = qtrue;
@@ -725,9 +725,9 @@ cvar_t *Cvar_Set2( const char *var_name, const char *value, qboolean force ) {
 	var->modified = qtrue;
 	var->modificationCount++;
 	cvar_group[ var->group ] = 1;
-	
+
 	Z_Free (var->string);	// free the old value string
-	
+
 	var->string = CopyString( value );
 	var->value = Q_atof( var->string );
 	var->integer = atoi( var->string );
@@ -947,7 +947,7 @@ static void Cvar_Print_f( void )
 {
 	char *name;
 	cvar_t *cv;
-	
+
 	if(Cmd_Argc() != 2)
 	{
 		Com_Printf ("usage: print <variable>\n");
@@ -957,7 +957,7 @@ static void Cvar_Print_f( void )
 	name = Cmd_Argv(1);
 
 	cv = Cvar_FindVar(name);
-	
+
 	if(cv)
 		Cvar_Print(cv);
 	else
@@ -1287,7 +1287,7 @@ static void Cvar_Func_f( void ) {
 		Com_Printf( "Cvar '%s' is write-protected.\n", cvar_name );
 		return;
 	}
-	
+
 	if ( cvar ) {
 		fval = cvar->value;
 		ival = cvar->integer;
@@ -1300,7 +1300,7 @@ static void Cvar_Func_f( void ) {
 		Cvar_Rand( &ival, &fval );
 	else
 		Cvar_Op( ftype, &ival, &fval ); // apply modification
-	
+
 	if ( cvar && cvar->validator == CV_INTEGER ) {
 		sprintf( value, "%i", ival );
 	} else {
@@ -1532,7 +1532,7 @@ static cvar_t *Cvar_Unset( cvar_t *cv )
 
 	// note what types of cvars have been modified (userinfo, archive, serverinfo, systeminfo)
 	cvar_modifiedFlags |= cv->flags;
-	
+
 	if ( cv->name )
 		Z_Free( cv->name );
 	if ( cv->string )
@@ -1563,7 +1563,7 @@ static cvar_t *Cvar_Unset( cvar_t *cv )
 		cv->hashNext->hashPrev = cv->hashPrev;
 
 	Com_Memset( cv, '\0', sizeof( *cv ) );
-	
+
 	return next;
 }
 
@@ -1578,18 +1578,18 @@ Unsets a userdefined cvar
 static void Cvar_Unset_f( void )
 {
 	cvar_t *cv;
-	
+
 	if ( Cmd_Argc() != 2 )
 	{
 		Com_Printf( "Usage: %s <varname>\n", Cmd_Argv( 0 ) );
 		return;
 	}
-	
+
 	cv = Cvar_FindVar( Cmd_Argv( 1 ) );
 
 	if ( !cv )
 		return;
-	
+
 	if ( cv->flags & CVAR_USER_CREATED )
 		Cvar_Unset( cv );
 	else
@@ -1620,13 +1620,13 @@ void Cvar_Restart( qboolean unsetVM )
 			curvar = Cvar_Unset(curvar);
 			continue;
 		}
-		
+
 		if(!(curvar->flags & (CVAR_ROM | CVAR_INIT | CVAR_NORESTART)))
 		{
 			// Just reset the rest to their default values.
 			Cvar_Set2(curvar->name, curvar->resetString, qfalse);
 		}
-		
+
 		curvar = curvar->next;
 	}
 }
@@ -1706,7 +1706,7 @@ static void Cvar_Trim_f( void )
 		return;
 	}
 
-#ifdef DEDICATED	
+#ifdef DEDICATED
 	Com_Printf( S_COLOR_YELLOW " You're not running a server, so not all subsystems/VMs are loaded.\n" );
 #else
 	Com_Printf( S_COLOR_YELLOW " You're not running a listen server, so not all subsystems/VMs are loaded.\n" );

@@ -296,7 +296,7 @@ to be configured even if they don't have defined names.
 */
 int Key_StringToKeynum( const char *str ) {
 	const keyname_t	*kn;
-	
+
 	if ( !str || str[0] == '\0' ) {
 		return -1;
 	}
@@ -443,7 +443,7 @@ static void Key_Unbind_f( void )
 		Com_Printf( "unbind <key> : remove commands from a key\n" );
 		return;
 	}
-	
+
 	b = Key_StringToKeynum( Cmd_Argv( 1 ) );
 	if ( b == -1 )
 	{
@@ -463,7 +463,7 @@ Key_Unbindall_f
 static void Key_Unbindall_f( void )
 {
 	int		i;
-	
+
 	for ( i = 0 ; i < MAX_KEYS; i++ ) 
 	{
 		if ( keys[i].binding )
@@ -482,7 +482,7 @@ Key_Bind_f
 static void Key_Bind_f( void )
 {
 	int c, b;
-	
+
 	c = Cmd_Argc();
 
 	if ( c < 2 )

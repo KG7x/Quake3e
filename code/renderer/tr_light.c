@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	DLIGHT_AT_RADIUS		16
 // at the edge of a dlight's influence, this amount of light will be added
 
-#define	DLIGHT_MINIMUM_RADIUS	16		
+#define	DLIGHT_MINIMUM_RADIUS	16
 // never calculate a range less than this to prevent huge light numbers
 
 
@@ -391,7 +391,7 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 	((byte *)&ent->ambientLightInt)[1] = myftol( ent->ambientLight[1] );
 	((byte *)&ent->ambientLightInt)[2] = myftol( ent->ambientLight[2] );
 	((byte *)&ent->ambientLightInt)[3] = 0xff;
-	
+
 	// transform the direction to local space
 	VectorNormalize( lightDir );
 	ent->lightDir[0] = DotProduct( lightDir, ent->e.axis[0] );
@@ -417,7 +417,7 @@ R_LightForPoint
 int R_LightForPoint( vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir )
 {
 	trRefEntity_t ent;
-	
+
 	if ( tr.world->lightGridData == NULL )
 	  return qfalse;
 

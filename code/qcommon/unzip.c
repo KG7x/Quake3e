@@ -790,8 +790,7 @@ int    gzread  OF((gzFile file, voidp buf, unsigned len));
      gzread returns the number of uncompressed bytes actually read (0 for
    end of file, -1 for error). */
 
-int    gzwrite OF((gzFile file, 
-				   const voidp buf, unsigned len));
+int    gzwrite OF((gzFile file, const voidp buf, unsigned len));
 /*
      Writes the given number of uncompressed bytes into the compressed file.
    gzwrite returns the number of uncompressed bytes actually written
@@ -843,8 +842,7 @@ int    gzflush OF((gzFile file, int flush));
    degrade compression.
 */
 
-long gzseek OF((gzFile file,
-				      long offset, int whence));
+long gzseek OF((gzFile file, long offset, int whence));
 /* 
       Sets the starting position for the next gzread or gzwrite on the
    given compressed file. The offset represents a number of bytes in the
@@ -939,8 +937,7 @@ static int deflateInit2_ OF((z_streamp strm, int  level, int  method,
                                       int strategy, const char *version,
                                       int stream_size));
 */
-static int inflateInit2_ OF((z_streamp strm, int  windowBits,
-                                      const char *version, int stream_size));
+static int inflateInit2_ OF((z_streamp strm, int  windowBits, const char *version, int stream_size));
 
 #define deflateInit(strm, level) \
         deflateInit_((strm), (level),       ZLIB_VERSION, sizeof(z_stream))
@@ -1124,11 +1121,11 @@ static int unzlocal_getShort (FILE* fin, uLong *pX)
 
     err = unzlocal_getByte(fin,&i);
     x = (uLong)i;
-    
+
     if (err==UNZ_OK)
         err = unzlocal_getByte(fin,&i);
     x += ((uLong)i)<<8;
-   
+
     if (err==UNZ_OK)
         *pX = x;
     else
@@ -1156,7 +1153,7 @@ static int unzlocal_getLong (FILE *fin, uLong *pX)
 
     err = unzlocal_getByte(fin,&i);
     x = (uLong)i;
-    
+
     if (err==UNZ_OK)
         err = unzlocal_getByte(fin,&i);
     x += ((uLong)i)<<8;
@@ -1168,7 +1165,7 @@ static int unzlocal_getLong (FILE *fin, uLong *pX)
     if (err==UNZ_OK)
         err = unzlocal_getByte(fin,&i);
     x += ((uLong)i)<<24;
-   
+
     if (err==UNZ_OK)
         *pX = x;
     else
@@ -1253,8 +1250,8 @@ extern uLong unzlocal_SearchCentralDir(FILE *fin)
 	unsigned char buf[BUFREADCOMMENT+4];
 	uLong uSizeFile;
 	uLong uBackRead;
-	uLong uMaxBack=0xffff; /* maximum size of global comment */
-	uLong uPosFound=0;
+	uLong uMaxBack = 0xffff; /* maximum size of global comment */
+	uLong uPosFound = 0;
 	
 	if (fseek(fin,0,SEEK_END) != 0)
 		return 0;
@@ -1308,7 +1305,7 @@ extern unzFile unzReOpen (const char* path, unzFile file)
 	unz_s *s;
 	FILE * fin;
 
-    fin=F_OPEN(path,"rb");
+	fin=F_OPEN(path,"rb");
 	if (fin==NULL)
 		return NULL;
 
@@ -1335,17 +1332,17 @@ extern unzFile unzOpen (const char* path)
 	uLong central_pos,uL;
 	FILE * fin ;
 
-	uLong number_disk;          /* number of the current dist, used for 
+	uLong number_disk;			/* number of the current dist, used for 
 								   spaning ZIP, unsupported, always 0*/
 	uLong number_disk_with_CD;  /* number the the disk with central dir, used
 								   for spaning ZIP, unsupported, always 0*/
-	uLong number_entry_CD;      /* total number of entries in
+	uLong number_entry_CD;		/* total number of entries in
 	                               the central dir 
 	                               (same than number_entry on nospan) */
 
 	int err=UNZ_OK;
 
-    fin=F_OPEN(path,"rb");
+	fin=F_OPEN(path,"rb");
 	if (fin==NULL)
 		return NULL;
 
@@ -1408,11 +1405,11 @@ extern unzFile unzOpen (const char* path)
 	us.byte_before_the_zipfile = central_pos -
 		                    (us.offset_central_dir+us.size_central_dir);
 	us.central_pos = central_pos;
-    us.pfile_in_zip_read = NULL;
+	us.pfile_in_zip_read = NULL;
 	
 	s=(unz_s*)ALLOC(sizeof(unz_s));
 	*s=us;
-//	unzGoToFirstFile((unzFile)s);	
+//	unzGoToFirstFile((unzFile)s);
 	return (unzFile)s;	
 }
 
@@ -1460,13 +1457,13 @@ static void unzlocal_DosDateToTmuDate (uLong ulDosDate, tm_unz* ptm)
 {
     uLong uDate;
     uDate = (uLong)(ulDosDate>>16);
-    ptm->tm_mday = (uInt)(uDate&0x1f) ;
-    ptm->tm_mon =  (uInt)((((uDate)&0x1E0)/0x20)-1) ;
-    ptm->tm_year = (uInt)(((uDate&0x0FE00)/0x0200)+1980) ;
+    ptm->tm_mday = (uInt)(uDate&0x1f);
+    ptm->tm_mon =  (uInt)((((uDate)&0x1E0)/0x20)-1);
+    ptm->tm_year = (uInt)(((uDate&0x0FE00)/0x0200)+1980);
 
     ptm->tm_hour = (uInt) ((ulDosDate &0xF800)/0x800);
-    ptm->tm_min =  (uInt) ((ulDosDate&0x7E0)/0x20) ;
-    ptm->tm_sec =  (uInt) (2*(ulDosDate&0x1f)) ;
+    ptm->tm_min =  (uInt) ((ulDosDate&0x7E0)/0x20);
+    ptm->tm_sec =  (uInt) (2*(ulDosDate&0x1f));
 }
 
 /*
@@ -1477,11 +1474,11 @@ static int unzlocal_GetCurrentFileInfoInternal (unzFile file,
                                                   unz_file_info_internal 
                                                   *pfile_info_internal,
                                                   char *szFileName,
-												  uLong fileNameBufferSize,
+                                                  uLong fileNameBufferSize,
                                                   void *extraField,
-												  uLong extraFieldBufferSize,
+                                                  uLong extraFieldBufferSize,
                                                   char *szComment,
-												  uLong commentBufferSize)
+                                                  uLong commentBufferSize)
 {
 	unz_s* s;
 	unz_file_info file_info;
@@ -1701,7 +1698,7 @@ extern int unzGoToFirstFile (unzFile file)
 */
 extern int unzGoToNextFile (unzFile file)
 {
-	unz_s* s;	
+	unz_s* s;
 	int err;
 
 	if (file==NULL)
@@ -1728,7 +1725,7 @@ extern int unzGoToNextFile (unzFile file)
 */
 extern int unzGetCurrentFileInfoPosition (unzFile file, unsigned long *pos )
 {
-	unz_s* s;	
+	unz_s* s;
 
 	if (file==NULL)
 		return UNZ_PARAMERROR;
@@ -1744,7 +1741,7 @@ extern int unzGetCurrentFileInfoPosition (unzFile file, unsigned long *pos )
 */
 extern int unzSetCurrentFileInfoPosition (unzFile file, unsigned long pos )
 {
-	unz_s* s;	
+	unz_s* s;
 	int err;
 
 	if (file==NULL)
@@ -1769,10 +1766,10 @@ extern int unzSetCurrentFileInfoPosition (unzFile file, unsigned long pos )
 */
 extern int unzLocateFile (unzFile file, const char *szFileName, int iCaseSensitivity)
 {
-	unz_s* s;	
+	unz_s* s;
 	int err;
 
-	
+
 	uLong num_fileSaved;
 	uLong pos_in_central_dirSaved;
 
@@ -1896,7 +1893,7 @@ static int unzlocal_CheckCurrentFileCoherencyHeader (unz_s* s, uInt* piSizeVar,
 
 	return err;
 }
-												
+
 /*
   Open for reading data the current file in the zipfile.
   If there is no error and the file is opened, the return value is UNZ_OK.
@@ -1951,8 +1948,7 @@ extern int unzOpenCurrentFile (unzFile file)
 
 	pfile_in_zip_read_info->crc32_wait=s->cur_file_info.crc;
 	pfile_in_zip_read_info->crc32=0;
-	pfile_in_zip_read_info->compression_method =
-            s->cur_file_info.compression_method;
+	pfile_in_zip_read_info->compression_method = s->cur_file_info.compression_method;
 	pfile_in_zip_read_info->file=s->file;
 	pfile_in_zip_read_info->byte_before_the_zipfile=s->byte_before_the_zipfile;
 
@@ -1975,16 +1971,12 @@ extern int unzOpenCurrentFile (unzFile file)
          * size of both compressed and uncompressed data
          */
 	}
-	pfile_in_zip_read_info->rest_read_compressed = 
-            s->cur_file_info.compressed_size ;
-	pfile_in_zip_read_info->rest_read_uncompressed = 
-            s->cur_file_info.uncompressed_size ;
+	pfile_in_zip_read_info->rest_read_compressed = s->cur_file_info.compressed_size ;
+	pfile_in_zip_read_info->rest_read_uncompressed = s->cur_file_info.uncompressed_size ;
 
-	
-	pfile_in_zip_read_info->pos_in_zipfile = 
-            s->cur_file_info_internal.offset_curfile + SIZEZIPLOCALHEADER + 
-			  iSizeVar;
-	
+
+	pfile_in_zip_read_info->pos_in_zipfile = s->cur_file_info_internal.offset_curfile + SIZEZIPLOCALHEADER + iSizeVar;
+
 	pfile_in_zip_read_info->stream.avail_in = (uInt)0;
 
 
@@ -2107,14 +2099,13 @@ extern int unzReadCurrentFile  (unzFile file, void *buf, unsigned len)
 //                crc32(pfile_in_zip_read_info->crc32,bufBefore,
 //                        (uInt)(uOutThis));
 
-			pfile_in_zip_read_info->rest_read_uncompressed -=
-                uOutThis;
+			pfile_in_zip_read_info->rest_read_uncompressed -= uOutThis;
 
 			iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
-            
+
 			if (err==Z_STREAM_END)
 				return (iRead==0) ? UNZ_EOF : iRead;
-			if (err!=Z_OK) 
+			if (err!=Z_OK)
 				break;
 		}
 	}
@@ -2135,7 +2126,7 @@ extern long unztell (unzFile file)
 	if (file==NULL)
 		return UNZ_PARAMERROR;
 	s=(unz_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+	pfile_in_zip_read_info=s->pfile_in_zip_read;
 
 	if (pfile_in_zip_read_info==NULL)
 		return UNZ_PARAMERROR;
@@ -2154,11 +2145,11 @@ extern int unzeof (unzFile file)
 	if (file==NULL)
 		return UNZ_PARAMERROR;
 	s=(unz_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+	pfile_in_zip_read_info=s->pfile_in_zip_read;
 
 	if (pfile_in_zip_read_info==NULL)
 		return UNZ_PARAMERROR;
-	
+
 	if (pfile_in_zip_read_info->rest_read_uncompressed == 0)
 		return 1;
 	else
@@ -2189,7 +2180,7 @@ extern int unzGetLocalExtrafield (unzFile file,void *buf,unsigned len)
 	if (file==NULL)
 		return UNZ_PARAMERROR;
 	s=(unz_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+	pfile_in_zip_read_info=s->pfile_in_zip_read;
 
 	if (pfile_in_zip_read_info==NULL)
 		return UNZ_PARAMERROR;
@@ -2199,7 +2190,7 @@ extern int unzGetLocalExtrafield (unzFile file,void *buf,unsigned len)
 
 	if (buf==NULL)
 		return (int)size_to_read;
-	
+
 	if (len>size_to_read)
 		read_now = (uInt)size_to_read;
 	else
@@ -2232,7 +2223,7 @@ extern int unzCloseCurrentFile (unzFile file)
 	if (file==NULL)
 		return UNZ_PARAMERROR;
 	s=(unz_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+	pfile_in_zip_read_info=s->pfile_in_zip_read;
 
 	if (pfile_in_zip_read_info==NULL)
 		return UNZ_PARAMERROR;
@@ -2253,7 +2244,7 @@ extern int unzCloseCurrentFile (unzFile file)
 	pfile_in_zip_read_info->stream_initialised = 0;
 	TRYFREE(pfile_in_zip_read_info);
 
-    s->pfile_in_zip_read=NULL;
+	s->pfile_in_zip_read=NULL;
 
 	return err;
 }
@@ -2280,11 +2271,11 @@ extern int unzGetGlobalComment (unzFile file, char *szComment, uLong uSizeBuf)
 		return UNZ_ERRNO;
 
 	if (uReadThis>0)
-    {
-      *szComment='\0';
+	{
+	  *szComment='\0';
 	  if (fread(szComment,(uInt)uReadThis,1,s->file)!=1)
 		return UNZ_ERRNO;
-    }
+	}
 
 	if ((szComment != NULL) && (uSizeBuf > s->gi.size_comment))
 		*(szComment+s->gi.size_comment)='\0';
@@ -2529,7 +2520,7 @@ static  int inflate_flush OF((
 
 #endif
 
-								
+
 /*
    Notes beyond the 1.93a appnote.txt:
 
@@ -3006,8 +2997,7 @@ static const uInt cpdist[30] = { /* Copy offsets for distance codes 0..29 */
         8193, 12289, 16385, 24577};
 static const uInt cpdext[30] = { /* Extra bits for distance codes */
         0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
-        7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
-        12, 12, 13, 13};
+        7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13};
 
 /*
    Huffman code decoding is performed using a multi-level table lookup.
@@ -3259,8 +3249,7 @@ int inflate_trees_bits(uInt *c, uInt *bb, inflate_huft * *tb, inflate_huft *hp, 
 
   //if ((v = (uInt*)ZALLOC(z, 19, sizeof(uInt))) == Z_NULL)
   //  return Z_MEM_ERROR;
-  r = huft_build(c, 19, 19, (uInt*)Z_NULL, (uInt*)Z_NULL,
-                 tb, bb, hp, &hn, v);
+  r = huft_build(c, 19, 19, (uInt*)Z_NULL, (uInt*)Z_NULL, tb, bb, hp, &hn, v);
   if (r == Z_DATA_ERROR)
     z->msg = (char*)"oversubscribed dynamic bit lengths tree";
   else if (r == Z_BUF_ERROR || *bb == 0)
@@ -3521,15 +3510,15 @@ static int inflate_fast(uInt bl, uInt bd, const inflate_huft *tl, const inflate_
   uInt e;               /* extra bits or operation */
   uLong b;              /* bit buffer */
   uInt k;               /* bits in bit buffer */
-  Byte *p;             /* input data pointer */
+  Byte *p;              /* input data pointer */
   uInt n;               /* bytes available there */
-  Byte *q;             /* output window write pointer */
+  Byte *q;              /* output window write pointer */
   uInt m;               /* bytes to end of window or read pointer */
   uInt ml;              /* mask for literal/length tree */
   uInt md;              /* mask for distance tree */
   uInt c;               /* bytes to copy */
   uInt d;               /* distance back to copy from */
-  Byte *r;             /* copy source pointer */
+  Byte *r;              /* copy source pointer */
 
   /* load input, output, bit values */
   LOAD
@@ -3578,7 +3567,7 @@ static int inflate_fast(uInt bl, uInt bd, const inflate_huft *tl, const inflate_
 
             /* do the copy */
             m -= c;
-			r = q - d;
+            r = q - d;
             if (r < s->window)                  /* wrap if needed */
             {
               do {
@@ -3743,11 +3732,11 @@ int inflate_codes(inflate_blocks_statef *s, z_streamp z, int r)
   uInt e;               /* extra bits or operation */
   uLong b;              /* bit buffer */
   uInt k;               /* bits in bit buffer */
-  Byte *p;             /* input data pointer */
+  Byte *p;              /* input data pointer */
   uInt n;               /* bytes available there */
-  Byte *q;             /* output window write pointer */
+  Byte *q;              /* output window write pointer */
   uInt m;               /* bytes to end of window or read pointer */
-  Byte *f;             /* pointer to copy strings from */
+  Byte *f;              /* pointer to copy strings from */
   inflate_codes_statef *c = s->sub.decode.codes;  /* codes state */
 
   /* copy input/output information to locals (UPDATE macro restores) */
@@ -3937,12 +3926,12 @@ static uLong adler32(uLong adler, const Byte *buf, uInt len)
         len -= k;
         while (k >= 16) {
             DO16(buf);
-	    buf += 16;
+        buf += 16;
             k -= 16;
         }
         if (k != 0) do {
             s1 += *buf++;
-	    s2 += s1;
+        s2 += s1;
         } while (--k);
         s1 %= BASE;
         s2 %= BASE;

@@ -385,7 +385,7 @@ void CL_ShutdownCGame( void ) {
 	if ( !cgvm ) {
 		return;
 	}
-	
+
 	re.VertexLighting( qfalse );
 
 	VM_Call( cgvm, 0, CG_SHUTDOWN );
@@ -1018,7 +1018,7 @@ static void CL_FirstSnapshot( void ) {
 		Cbuf_AddText( "\n" );
 		Cvar_Set( "activeAction", "" );
 	}
-	
+
 	Sys_BeginProfiling();
 }
 
