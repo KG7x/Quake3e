@@ -378,7 +378,7 @@ void AAS_Accelerate(vec3_t velocity, float frametime, vec3_t wishdir, float wish
 	}
 
 	for (i=0 ; i<3 ; i++) {
-		velocity[i] += accelspeed*wishdir[i];	
+		velocity[i] += accelspeed*wishdir[i];
 	}
 } //end of the function AAS_Accelerate
 //===========================================================================
@@ -521,7 +521,7 @@ static int AAS_ClientMovementPrediction( aas_clientmove_t *move,
 	vec3_t up = {0, 0, 1};
 	aas_plane_t *plane, *plane2;
 	aas_trace_t trace, steptrace;
-	
+
 	if (frametime <= 0) frametime = 0.1f;
 	//
 	phys_friction = aassettings.phys_friction;
@@ -812,13 +812,13 @@ static int AAS_ClientMovementPrediction( aas_clientmove_t *move,
 				if (!step)
 				{
 					//velocity left to test for this frame is the projection
-					//of the current test velocity into the hit plane 
+					//of the current test velocity into the hit plane
 					VectorMA(left_test_vel, -DotProduct(left_test_vel, plane->normal),
 										plane->normal, left_test_vel);
 					//store the old velocity for landing check
 					VectorCopy(frame_test_vel, old_frame_test_vel);
 					//test velocity for the next frame is the projection
-					//of the velocity of the current frame into the hit plane 
+					//of the velocity of the current frame into the hit plane
 					VectorMA(frame_test_vel, -DotProduct(frame_test_vel, plane->normal),
 										plane->normal, frame_test_vel);
 					//check for a landing on an almost horizontal floor

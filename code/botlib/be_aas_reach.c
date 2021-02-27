@@ -1213,7 +1213,7 @@ int AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(int area1num, int area2
 						memcpy( p2area1, v2, sizeof( v2 ) );
 						memcpy( p1area2, v3, sizeof( v3 ) );
 						memcpy( p2area2, v4, sizeof( v4 ) );
-#else	
+#else
 						VectorCopy(v1, p1area1);
 						VectorCopy(v2, p2area1);
 						VectorCopy(v3, p1area2);
@@ -2648,7 +2648,7 @@ int AAS_Reachability_Ladder(int area1num, int area2num)
 					lreach->next = areareachability[area2num];
 					areareachability[area2num] = lreach;
 					//
-					reach_jump++;	
+					reach_jump++;
 					//
 					return qtrue;
 #ifdef REACH_DEBUG

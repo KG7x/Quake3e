@@ -480,7 +480,7 @@ void Cmd_Args_Sanitize( const char *separators )
 	for( i = 1; i < cmd_argc; i++ )
 	{
 		char *c = cmd_argv[i];
-		
+
 		while ( ( c = strpbrk( c, separators ) ) != NULL ) {
 			*c = ' ';
 			++c;
@@ -494,8 +494,8 @@ void Cmd_Args_Sanitize( const char *separators )
 Cmd_TokenizeString
 
 Parses the given string into command line tokens.
-The text is copied to a seperate buffer and 0 characters
-are inserted in the apropriate place, The argv array
+The text is copied to a separate buffer and 0 characters
+are inserted in the appropriate place, The argv array
 will point into this temporary buffer.
 ============
 */

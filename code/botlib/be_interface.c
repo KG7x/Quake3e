@@ -118,7 +118,7 @@ static qboolean BotLibSetup(const char *str)
 int Export_BotLibSetup( void )
 {
 	int		errnum;
-	
+
 	botDeveloper = LibVarGetValue( "bot_developer" );
 	memset( &botlibglobals, 0, sizeof( botlibglobals ) );
 
@@ -175,7 +175,7 @@ int Export_BotLibShutdown(void)
 	BotShutdownCharacters();	//be_ai_char.c
 	//shud down aas
 	AAS_Shutdown();
-	//shut down bot elemantary actions
+	//shut down bot elementary actions
 	EA_Shutdown();
 	//free all libvars
 	LibVarDeAllocAll();
@@ -597,7 +597,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3)
 		{
 			AAS_ShowFace(face - aasworld.faces);
 		} //end if
-		
+
 		AAS_DrawPlaneCross(bsptrace.endpos, bsptrace.plane.normal, bsptrace.plane.dist + bsptrace.exp_dist, bsptrace.plane.type, LINECOLOR_GREEN);
 		if (trace.ent)
 		{

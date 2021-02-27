@@ -143,7 +143,7 @@ static void R_SetupEntityLightingGrid( trRefEntity_t *ent ) {
 	float	totalFactor;
 
 	if ( ent->e.renderfx & RF_LIGHTING_ORIGIN ) {
-		// seperate lightOrigins are needed so an object that is
+		// separate lightOrigins are needed so an object that is
 		// sinking into the ground can still be lit, and so
 		// multi-part models can be lit identically
 		VectorCopy( ent->e.lightingOrigin, lightOrigin );
@@ -294,7 +294,7 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 	vec3_t			shadowLightDir;
 #endif
 
-	// lighting calculations 
+	// lighting calculations
 	if ( ent->lightingCalculated ) {
 		return;
 	}
@@ -304,7 +304,7 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 	// trace a sample point down to find ambient light
 	//
 	if ( ent->e.renderfx & RF_LIGHTING_ORIGIN ) {
-		// seperate lightOrigins are needed so an object that is
+		// separate lightOrigins are needed so an object that is
 		// sinking into the ground can still be lit, and so
 		// multi-part models can be lit identically
 		VectorCopy( ent->e.lightingOrigin, lightOrigin );
@@ -313,13 +313,13 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 	}
 
 	// if NOWORLDMODEL, only use dynamic lights (menu system, etc)
-	if ( !(refdef->rdflags & RDF_NOWORLDMODEL ) 
+	if ( !(refdef->rdflags & RDF_NOWORLDMODEL )
 		&& tr.world->lightGridData ) {
 		R_SetupEntityLightingGrid( ent );
 	} else {
-		ent->ambientLight[0] = ent->ambientLight[1] = 
+		ent->ambientLight[0] = ent->ambientLight[1] =
 			ent->ambientLight[2] = tr.identityLight * 150;
-		ent->directedLight[0] = ent->directedLight[1] = 
+		ent->directedLight[0] = ent->directedLight[1] =
 			ent->directedLight[2] = tr.identityLight * 150;
 		VectorCopy( tr.sunDirection, ent->lightDir );
 	}
@@ -338,7 +338,7 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 	d = VectorLength( ent->directedLight );
 	VectorScale( ent->lightDir, d, lightDir );
 #ifdef USE_PMLIGHT
-	if ( r_dlightMode->integer == 2 ) { 
+	if ( r_dlightMode->integer == 2 ) {
 		// only direct lights
 		// but we need to deal with shadow light direction
 		VectorCopy( lightDir, shadowLightDir );

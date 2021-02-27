@@ -343,7 +343,7 @@ static void S_TransferPaintBuffer( int endtime, byte *buffer )
 	{	// general case
 		p = (int *) paintbuffer;
 		count = (endtime - s_paintedtime) * dma.channels;
-		out_mask = dma.samples - 1; 
+		out_mask = dma.samples - 1;
 		out_idx = s_paintedtime * dma.channels & out_mask;
 		step = 3 - dma.channels;
 
@@ -739,7 +739,7 @@ void S_PaintChannels( int endtime ) {
 				count = sc->soundLength - sampleOffset;
 			}
 
-			if ( count > 0 ) {	
+			if ( count > 0 ) {
 				if( sc->soundCompressionMethod == 1) {
 					S_PaintChannelFromADPCM		(ch, sc, count, sampleOffset, ltime - s_paintedtime);
 				} else if( sc->soundCompressionMethod == 2) {

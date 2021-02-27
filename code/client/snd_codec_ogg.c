@@ -62,7 +62,7 @@ size_t S_OGG_Callback_read(void *ptr, size_t size, size_t nmemb, void *datasourc
 	// check if input is valid
 	if(!ptr)
 	{
-		errno = EFAULT; 
+		errno = EFAULT;
 		return 0;
 	}
 
@@ -75,7 +75,7 @@ size_t S_OGG_Callback_read(void *ptr, size_t size, size_t nmemb, void *datasourc
 
 	if(!datasource)
 	{
-		errno = EBADF; 
+		errno = EBADF;
 		return 0;
 	}
 
@@ -95,7 +95,7 @@ size_t S_OGG_Callback_read(void *ptr, size_t size, size_t nmemb, void *datasourc
 	nMembRead = bytesRead / size;
 
 	// even if the last member is only read partially
-	// it is counted as a whole in the return value	
+	// it is counted as a whole in the return value
 	if(bytesRead % size)
 	{
 		nMembRead++;
@@ -113,7 +113,7 @@ int S_OGG_Callback_seek(void *datasource, ogg_int64_t offset, int whence)
 	// check if input is valid
 	if(!datasource)
 	{
-		errno = EBADF; 
+		errno = EBADF;
 		return -1;
 	}
 
@@ -232,7 +232,7 @@ snd_stream_t *S_OGG_CodecOpenStream(const char *filename)
 	// OGG codec control structure
 	OggVorbis_File *vf;
 
-	// some variables used to get informations about the OGG 
+	// some variables used to get informations about the OGG
 	vorbis_info *OGGInfo;
 	ogg_int64_t numSamples;
 
@@ -279,7 +279,7 @@ snd_stream_t *S_OGG_CodecOpenStream(const char *filename)
 
 		return NULL;
 	}
- 
+
 	// we only support OGGs with one substream
 	if(ov_streams(vf) != 1)
 	{
@@ -316,7 +316,7 @@ snd_stream_t *S_OGG_CodecOpenStream(const char *filename)
 	stream->info.size = stream->info.samples * stream->info.channels * stream->info.width;
 	stream->info.dataofs = 0;
 
-	// We use stream->pos for the file pointer in the compressed ogg file 
+	// We use stream->pos for the file pointer in the compressed ogg file
 	stream->pos = 0;
 
 	// We use the generic pointer in stream for the OGG codec control structure
@@ -414,7 +414,7 @@ int S_OGG_CodecReadStream(snd_stream_t *stream, int bytes, void *buffer)
 =====================================================================
 S_OGG_CodecLoad
 
-We handle S_OGG_CodecLoad as a special case of the streaming functions 
+We handle S_OGG_CodecLoad as a special case of the streaming functions
 where we read the whole stream at once.
 ======================================================================
 */
@@ -457,7 +457,7 @@ void *S_OGG_CodecLoad(const char *filename, snd_info_t *info)
 
 	// fill the buffer
 	bytesRead = S_OGG_CodecReadStream(stream, info->size, buffer);
-	
+
 	// we don't even have read a single byte
 	if(bytesRead <= 0)
 	{

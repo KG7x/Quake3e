@@ -19,7 +19,7 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-// snd_local.h -- private sound definations
+// snd_local.h -- private sound definitions
 
 
 #include "../qcommon/q_shared.h"

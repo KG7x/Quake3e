@@ -69,7 +69,7 @@ Cvar_ValidateName
 static qboolean Cvar_ValidateName( const char *name ) {
 	const char *s;
 	int c;
-	
+
 	if ( !name ) {
 		return qfalse;
 	}
@@ -298,7 +298,7 @@ static const char *Cvar_Validate( cvar_t *var, const char *value, qboolean warn 
 			if ( warn ) {
 				if ( limit && ( limit == var->mins || limit == var->maxs ) ) {
 					if ( value == intbuf ) { // cast to integer
-						Com_Printf( " and" ); 
+						Com_Printf( " and" );
 					} else {
 						Com_Printf( "WARNING: cvar '%s'", var->name );
 					}
@@ -399,7 +399,7 @@ cvar_t *Cvar_Get( const char *var_name, const char *var_value, int flags ) {
 
 				if(var->latchedString)
 					Z_Free(var->latchedString);
-				
+
 				var->latchedString = CopyString(var_value);
 			}
 		}
@@ -438,7 +438,7 @@ cvar_t *Cvar_Get( const char *var_name, const char *var_value, int flags ) {
 			Z_Free( s );
 		}
 
-		// ZOID--needs to be set so that cvars the game sets as 
+		// ZOID--needs to be set so that cvars the game sets as
 		// SERVERINFO get sent to clients
 		cvar_modifiedFlags |= flags;
 
@@ -510,7 +510,7 @@ cvar_t *Cvar_Get( const char *var_name, const char *var_value, int flags ) {
 }
 
 
-static void Cvar_QSortByName( cvar_t **a, int n ) 
+static void Cvar_QSortByName( cvar_t **a, int n )
 {
 	cvar_t *temp;
 	cvar_t *m;
@@ -526,10 +526,10 @@ static void Cvar_QSortByName( cvar_t **a, int n )
 		while ( strcmp( a[j]->name, m->name ) < 0 ) j--;
 
 		if ( i <= j ) {
-			temp = a[i]; 
-			a[i] = a[j]; 
+			temp = a[i];
+			a[i] = a[j];
 			a[j] = temp;
-			i++; 
+			i++;
 			j--;
 		}
 	} while ( i <= j );
@@ -539,7 +539,7 @@ static void Cvar_QSortByName( cvar_t **a, int n )
 }
 
 
-static void Cvar_Sort( void ) 
+static void Cvar_Sort( void )
 {
 	cvar_t *list[ MAX_CVARS ], *var;
 	int count;
@@ -558,7 +558,7 @@ static void Cvar_Sort( void )
 	}
 
 	Cvar_QSortByName( &list[0], count-1 );
-	
+
 	cvar_vars = NULL;
 
 	// relink cvars
@@ -847,12 +847,12 @@ qboolean Cvar_SetModified( const char *var_name, qboolean modified )
 	cvar_t	*var;
 
 	var = Cvar_FindVar( var_name );
-	if ( var ) 
+	if ( var )
 	{
 		var->modified = modified;
 		return qtrue;
 	}
-	else 
+	else
 	{
 		return qfalse;
 	}
@@ -894,7 +894,7 @@ void Cvar_SetCheatState(void)
 	{
 		if(var->flags & CVAR_CHEAT)
 		{
-			// the CVAR_LATCHED|CVAR_CHEAT vars might escape the reset here 
+			// the CVAR_LATCHED|CVAR_CHEAT vars might escape the reset here
 			// because of a different var->latchedString
 			if (var->latchedString)
 			{
@@ -939,7 +939,7 @@ qboolean Cvar_Command( void ) {
 ============
 Cvar_Print_f
 
-Prints the contents of a cvar 
+Prints the contents of a cvar
 (preferred over Cvar_Command where cvar names and commands conflict)
 ============
 */
@@ -984,7 +984,7 @@ static void Cvar_Toggle_f( void ) {
 	}
 
 	if ( c == 2 ) {
-		Cvar_Set2( Cmd_Argv( 1 ), va( "%d", !Cvar_VariableValue( Cmd_Argv( 1 ) ) ), 
+		Cvar_Set2( Cmd_Argv( 1 ), va( "%d", !Cvar_VariableValue( Cmd_Argv( 1 ) ) ),
 			qfalse );
 		return;
 	}
@@ -1076,8 +1076,8 @@ static void Cvar_Reset_f( void ) {
 }
 
 
-// returns NULL for non-existent "-" agrument
-static const char *GetValue( int index, int *ival, float *fval ) 
+// returns NULL for non-existent "-" argument
+static const char *GetValue( int index, int *ival, float *fval )
 {
 	static char buf[ MAX_CVAR_VALUE_STRING ];
 	const char *cmd;
@@ -1123,7 +1123,7 @@ typedef enum {
 } funcType_t;
 
 
-static funcType_t GetFuncType( void ) 
+static funcType_t GetFuncType( void )
 {
 	const char *cmd;
 	cmd = Cmd_Argv( 1 );
@@ -1148,7 +1148,7 @@ static funcType_t GetFuncType( void )
 }
 
 
-static qboolean AllowEmptyCvar( funcType_t ftype ) 
+static qboolean AllowEmptyCvar( funcType_t ftype )
 {
 	switch ( ftype ) {
 		case FT_ADD:
@@ -1163,7 +1163,7 @@ static qboolean AllowEmptyCvar( funcType_t ftype )
 }
 
 
-static void Cvar_Op( funcType_t ftype, int *ival, float *fval ) 
+static void Cvar_Op( funcType_t ftype, int *ival, float *fval )
 {
 	int icap, imod;
 	float fcap, fmod;
@@ -1205,7 +1205,7 @@ static void Cvar_Op( funcType_t ftype, int *ival, float *fval )
 				*ival = cos( imod );
 				*fval = cos( fmod );
 				break;
-		default: 
+		default:
 			break;
 	}
 
@@ -1224,7 +1224,7 @@ static void Cvar_Op( funcType_t ftype, int *ival, float *fval )
 }
 
 
-static void Cvar_Rand( int *ival, float *fval ) 
+static void Cvar_Rand( int *ival, float *fval )
 {
 	int icap;
 	float fcap;
@@ -1267,7 +1267,7 @@ static void Cvar_Func_f( void ) {
 
 	//     0     1     2      3      4        5
 	// \varfunc <op> <cvar> <val> [lo-cap] [hi-cap]
-	
+
 	// \varfunc rand <cvar> [base] [modulus]
 
 	ftype = GetFuncType(); // index 1: function type
@@ -1343,7 +1343,7 @@ void Cvar_WriteVariables( fileHandle_t f )
 			// write the latched value, even if it hasn't taken effect yet
 			value = var->latchedString ? var->latchedString : var->string;
 			if ( strlen( var->name ) + strlen( value ) + 10 > sizeof( buffer ) ) {
-				Com_Printf( S_COLOR_YELLOW "WARNING: %svalue of variable \"%s\" too long to write to file\n", 
+				Com_Printf( S_COLOR_YELLOW "WARNING: %svalue of variable \"%s\" too long to write to file\n",
 					value == var->latchedString ? "latched " : "", var->name );
 				continue;
 			}
@@ -1593,7 +1593,7 @@ static void Cvar_Unset_f( void )
 	if ( cv->flags & CVAR_USER_CREATED )
 		Cvar_Unset( cv );
 	else
-		Com_Printf( "Error: %s: Variable %s is not user created.\n", 
+		Com_Printf( "Error: %s: Variable %s is not user created.\n",
 			Cmd_Argv( 0 ), cv->name );
 }
 
@@ -2003,7 +2003,7 @@ void Cvar_Update( vmCvar_t *vmCvar ) {
 	}
 	if ( !cv->string ) {
 		return;		// variable might have been cleared by a cvar_restart
-	} 
+	}
 	if ( cv->flags & CVAR_PRIVATE ) {
 		return;
 	}
@@ -2015,7 +2015,7 @@ void Cvar_Update( vmCvar_t *vmCvar ) {
 			cv->string, (int)len );
 	}
 
-	Q_strncpyz( vmCvar->string, cv->string, sizeof( vmCvar->string ) ); 
+	Q_strncpyz( vmCvar->string, cv->string, sizeof( vmCvar->string ) );
 
 	vmCvar->value = cv->value;
 	vmCvar->integer = cv->integer;

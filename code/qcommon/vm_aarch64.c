@@ -2266,7 +2266,7 @@ qboolean ConstOptimize( vm_t *vm )
 				unmask_rx( rx[1] );
 			}
 		}
-		inc_opstack(); store_rx_opstack( rx[0] ); // opstack +=4 ; *opstack = r0; 
+		inc_opstack(); store_rx_opstack( rx[0] ); // opstack +=4 ; *opstack = r0;
 		ip += 1; // OP_LOAD1
 		return qtrue;
 

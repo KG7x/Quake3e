@@ -52,7 +52,7 @@ const int demo_protocols[] = { 66, 67, PROTOCOL_VERSION, NEW_PROTOCOL_VERSION, 0
 #define DEF_COMZONEMEGS		25
 #endif
 
-jmp_buf abortframe;		// an ERR_DROP occured, exit the entire frame
+jmp_buf abortframe;		// an ERR_DROP occurred, exit the entire frame
 
 int		CPU_Flags = 0;
 
@@ -164,7 +164,7 @@ void Com_EndRedirect( void )
 Com_Printf
 
 Both client and server can use this, and it will output
-to the apropriate place.
+to the appropriate place.
 
 A raw string should NEVER be passed as fmt, because of "%f" type crashers.
 =============
@@ -278,7 +278,7 @@ void QDECL Com_DPrintf( const char *fmt, ...) {
 Com_Error
 
 Both client and server can use this, and it will
-do the apropriate things.
+do the appropriate things.
 =============
 */
 void QDECL Com_Error( errorParm_t code, const char *fmt, ... ) {
@@ -357,7 +357,7 @@ void QDECL Com_Error( errorParm_t code, const char *fmt, ... ) {
 
 		longjmp( abortframe, -1 );
 	} else if ( code == ERR_DROP ) {
-		Com_Printf( "********************\nERROR: %s\n********************\n", 
+		Com_Printf( "********************\nERROR: %s\n********************\n",
 			com_errorMessage );
 		VM_Forced_Unload_Start();
 		SV_Shutdown( va( "Server crashed: %s",  com_errorMessage ) );
@@ -412,7 +412,7 @@ void QDECL Com_Error( errorParm_t code, const char *fmt, ... ) {
 Com_Quit_f
 
 Both client and server can use this, and it will
-do the apropriate things.
+do the appropriate things.
 =============
 */
 void Com_Quit_f( void ) {
@@ -441,7 +441,7 @@ void Com_Quit_f( void ) {
 
 COMMAND LINE FUNCTIONS
 
-+ characters seperate the commandLine string into multiple console
++ characters separate the commandLine string into multiple console
 command lines.
 
 All of these are valid:
@@ -505,7 +505,7 @@ Com_EarlyParseCmdLine
 returns qtrue if both vid_xpos and vid_ypos was set
 ===================
 */
-qboolean Com_EarlyParseCmdLine( char *commandLine, char *con_title, int title_size, int *vid_xpos, int *vid_ypos ) 
+qboolean Com_EarlyParseCmdLine( char *commandLine, char *con_title, int title_size, int *vid_xpos, int *vid_ypos )
 {
 	int		flags = 0;
 	int		i;
@@ -627,7 +627,7 @@ void Com_StartupVariable( const char *match ) {
 Com_AddStartupCommands
 
 Adds command line parameters as script statements
-Commands are seperated by + signs
+Commands are separated by + signs
 
 Returns qtrue if any late commands were added, which
 will keep the demoloop from immediately starting
@@ -948,7 +948,7 @@ int64_t Sys_Microseconds( void )
 		if ( !freq.QuadPart )
 		{
 			return (int64_t)Sys_Milliseconds() * 1000LL; // fallback
-		} 
+		}
 		inited = qtrue;
 		return 0;
 	}
@@ -1073,7 +1073,7 @@ static void RemoveFree( memblock_t *block )
 		Com_Error( ERR_FATAL, "RemoveFree: bad pointers fb->next: %p, fb->prev: %p\n", fb->next, fb->prev );
 	}
 #endif
-	
+
 	prev = fb->prev;
 	next = fb->next;
 
@@ -1102,7 +1102,7 @@ static void InsertFree( memzone_t *zone, memblock_t *block )
 	else
 #endif
 		prev = &zone->freelist;
-	
+
 	next = prev->next;
 
 #ifdef ZONE_DEBUG
@@ -1129,7 +1129,7 @@ Separator is needed to avoid additional runtime checks in Z_Free()
 to prevent merging it with previous free block
 ================
 */
-static freeblock_t *NewBlock( memzone_t *zone, int size ) 
+static freeblock_t *NewBlock( memzone_t *zone, int size )
 {
 	memblock_t *prev, *next;
 	memblock_t *block, *sep;
@@ -1183,7 +1183,7 @@ static freeblock_t *NewBlock( memzone_t *zone, int size )
 
 static memblock_t *SearchFree( memzone_t *zone, int size )
 {
-	const freeblock_t *fb; 
+	const freeblock_t *fb;
 	memblock_t *base;
 
 #ifdef TINY_SIZE
@@ -1269,7 +1269,7 @@ static void Z_ClearZone( memzone_t *zone, memzone_t *head, int size, int segnum 
 #endif
 	zone->size = size;
 	zone->used = 0;
-	
+
 	block->prev = block->next = &zone->blocklist;
 	block->tag = TAG_FREE;	// free block
 	block->id = ZONEID;
@@ -1288,7 +1288,7 @@ static void Z_ClearZone( memzone_t *zone, memzone_t *head, int size, int segnum 
 
 	InitFree( &zone->freelist_tiny );
 	zone->freelist_tiny.next = zone->freelist_tiny.prev = &zone->freelist_tiny;
-	
+
 	InsertFree( zone, block );
 #endif
 }
@@ -1376,7 +1376,7 @@ void Z_Free( void *ptr ) {
 
 	block->tag = TAG_FREE; // mark as free
 	block->id = ZONEID;
-	
+
 	other = block->prev;
 	if ( other->tag == TAG_FREE ) {
 #ifdef USE_MULTI_SEGMENT
@@ -1435,7 +1435,7 @@ int Z_FreeTags( memtag_t tag ) {
 		if ( block->tag == tag && block->id == ZONEID ) {
 			if ( block->prev->tag == TAG_FREE )
 				freed = block->prev;  // current block will be merged with previous
-			else 
+			else
 				freed = block; // will leave in place
 			Z_Free( (void*)( block + 1 ) );
 			block = freed;
@@ -1586,7 +1586,7 @@ void *Z_MallocDebug( int size, char *label, char *file, int line ) {
 void *Z_Malloc( int size ) {
 #endif
 	void	*buf;
-	
+
   //Z_CheckHeap ();	// DEBUG
 
 #ifdef ZONE_DEBUG
@@ -1781,7 +1781,7 @@ char *CopyString( const char *in ) {
 ==============================================================================
 
 Goals:
-	reproducable without history effects -- no out of memory errors on weird map to map changes
+	reproducible without history effects -- no out of memory errors on weird map to map changes
 	allow restarting of the client without fragmentation
 	minimize total pages in use at run time
 	minimize total pages needed during load time
@@ -1871,7 +1871,7 @@ typedef struct zone_stats_s {
 } zone_stats_t;
 
 
-static void Zone_Stats( const char *name, const memzone_t *z, qboolean printDetails, zone_stats_t *stats ) 
+static void Zone_Stats( const char *name, const memzone_t *z, qboolean printDetails, zone_stats_t *stats )
 {
 	const memblock_t *block;
 	const memzone_t *zone;
@@ -2190,7 +2190,7 @@ static void Com_InitHunkMemory( void ) {
 
 	// make sure the file system has allocated and "not" freed any temp blocks
 	// this allows the config and product id files ( journal files too ) to be loaded
-	// by the file system without redunant routines in the file system utilizing different 
+	// by the file system without redunant routines in the file system utilizing different
 	// memory systems
 	if ( FS_LoadStack() != 0 ) {
 		Com_Error( ERR_FATAL, "Hunk initialization failed. File system load stack not zero" );
@@ -2430,7 +2430,7 @@ void *Hunk_AllocateTempMemory( int size ) {
 
 	// return a Z_Malloc'd block if the hunk has not been initialized
 	// this allows the config and product id files ( journal files too ) to be loaded
-	// by the file system without redunant routines in the file system utilizing different 
+	// by the file system without redunant routines in the file system utilizing different
 	// memory systems
 	if ( s_hunkData == NULL )
 	{
@@ -2478,7 +2478,7 @@ void Hunk_FreeTempMemory( void *buf ) {
 
 	// free with Z_Free if the hunk has not been initialized
 	// this allows the config and product id files ( journal files too ) to be loaded
-	// by the file system without redunant routines in the file system utilizing different 
+	// by the file system without redunant routines in the file system utilizing different
 	// memory systems
 	if ( s_hunkData == NULL )
 	{
@@ -2601,7 +2601,7 @@ static const char *Sys_EventName( sysEventType_t evType ) {
 		"SE_CHAR",
 		"SE_MOUSE",
 		"SE_JOYSTICK_AXIS",
-		"SE_CONSOLE" 
+		"SE_CONSOLE"
 	};
 
 	if ( evType >= SE_MAX ) {
@@ -3042,7 +3042,7 @@ void Com_GameRestart( int checksumFeed, qboolean clientRestart )
 		{
 			CL_Disconnect( qfalse );
 			CL_ShutdownAll();
-			CL_ClearMemory(); // Hunk_Clear(); // -EC- 
+			CL_ClearMemory(); // Hunk_Clear(); // -EC-
 		}
 #endif
 
@@ -3161,7 +3161,7 @@ qboolean Com_CDKeyValidate( const char *key, const char *checksum ) {
 	}
 
 	sprintf(chs, "%02x", sum);
-	
+
 	if (checksum && !Q_stricmp(chs, checksum)) {
 		return qtrue;
 	}
@@ -3622,7 +3622,7 @@ void Com_Init( char *commandLine ) {
 	Com_StartupVariable( "vm_rtChecks" );
 	vm_rtChecks = Cvar_Get( "vm_rtChecks", "15", CVAR_INIT | CVAR_PROTECTED );
 	Cvar_CheckRange( vm_rtChecks, "0", "15", CV_INTEGER );
-	Cvar_SetDescription( vm_rtChecks, 
+	Cvar_SetDescription( vm_rtChecks,
 		"Runtime checks in compiled vm code, bitmask:\n 1 - program stack overflow\n" \
 		" 2 - opcode stack overflow\n 4 - jump target range\n 8 - data read/write range" );
 
@@ -3700,7 +3700,7 @@ void Com_Init( char *commandLine ) {
 	com_speeds = Cvar_Get( "com_speeds", "0", 0 );
 	com_cameraMode = Cvar_Get( "com_cameraMode", "0", CVAR_CHEAT );
 
-#ifndef DEDICATED	
+#ifndef DEDICATED
 	com_timedemo = Cvar_Get( "timedemo", "0", 0 );
 	Cvar_CheckRange( com_timedemo, "0", "1", CV_INTEGER );
 	cl_paused = Cvar_Get( "cl_paused", "0", CVAR_ROM );
@@ -3940,7 +3940,7 @@ static int Com_ModifyMsec( int msec ) {
 			Com_Printf( "Hitch warning: %i msec frame time\n", msec );
 
 		clampTime = 5000;
-	} else 
+	} else
 	if ( !com_sv_running->integer ) {
 		// clients of remote servers do not want to clamp time, because
 		// it would skew their view of the server's time temporarily
@@ -4042,7 +4042,7 @@ void Com_Frame( qboolean noDelay ) {
 	if ( com_speeds->integer ) {
 		timeBeforeFirstEvents = Sys_Milliseconds();
 	}
-	
+
 	// we may want to spin here if things are going too fast
 	if ( com_dedicated->integer ) {
 		minMsec = SV_FrameMsec();
@@ -4196,9 +4196,9 @@ void Com_Frame( qboolean noDelay ) {
 		sv -= time_game;
 		cl -= time_frontend + time_backend;
 
-		Com_Printf ("frame:%i all:%3i sv:%3i ev:%3i cl:%3i gm:%3i rf:%3i bk:%3i\n", 
+		Com_Printf ("frame:%i all:%3i sv:%3i ev:%3i cl:%3i gm:%3i rf:%3i bk:%3i\n",
 					 com_frameNumber, all, sv, ev, cl, time_game, time_frontend, time_backend );
-	}	
+	}
 
 	//
 	// trace optimization tracking
@@ -4386,7 +4386,7 @@ static qboolean Field_Complete( void )
 	}
 
 	Com_Printf( "]%s\n", completionField->buffer );
-	
+
 	return qfalse;
 }
 
@@ -4435,7 +4435,7 @@ void Field_CompleteKeyBind( int key )
 	if ( vlen + blen > sizeof( completionField->buffer ) - 1 )
 	{
 		//vlen = sizeof( completionField->buffer ) - 1 - blen;
-		return;	
+		return;
 	}
 
 	memcpy( completionField->buffer + blen, value, vlen + 1 );
@@ -4481,7 +4481,7 @@ static void Field_CompleteCvarValue( const char *value, const char *current )
 	if ( vlen + blen > sizeof( completionField->buffer ) - 1 )
 	{
 		//vlen = sizeof( completionField->buffer ) - 1 - blen;
-		return;	
+		return;
 	}
 
 	if ( blen > 1 )

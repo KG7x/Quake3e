@@ -833,7 +833,7 @@ int PS_ReadPrimitive(script_t *script, token_t *token)
 	token->string[len] = 0;
 	//copy the token into the script structure
 	Com_Memcpy(&script->token, token, sizeof(token_t));
-	//primitive reading successfull
+	//primitive reading successful
 	return 1;
 } //end of the function PS_ReadPrimitive
 //============================================================================
@@ -1161,7 +1161,7 @@ float ReadSignedFloat(script_t *script)
 
 		sign = -1.0;
 	}
-	
+
 	if (token.type != TT_NUMBER)
 	{
 		ScriptError(script, "expected float value, found %s", token.string);
@@ -1198,7 +1198,7 @@ signed long int ReadSignedInt(script_t *script)
 		ScriptError(script, "expected integer value, found %s", token.string);
 		return 0;
 	}
-	
+
 	return sign * token.intvalue;
 } //end of the function ReadSignedInt
 //============================================================================

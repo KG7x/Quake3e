@@ -198,7 +198,7 @@ int MSG_ReadBits( msg_t *msg, int bits ) {
 		const int nbits = bits & 7;
 		int bitIndex = msg->bit; // dereference optimization
 		if ( nbits )
-		{		
+		{
 			for ( i = 0; i < nbits; i++ ) {
 				value |= HuffmanGetBit( buffer, bitIndex ) << i;
 				bitIndex++;
@@ -355,7 +355,7 @@ int MSG_ReadByte( msg_t *msg ) {
 	c = (unsigned char)MSG_ReadBits( msg, 8 );
 	if ( msg->readcount > msg->cursize ) {
 		c = -1;
-	}	
+	}
 	return c;
 }
 
@@ -515,7 +515,7 @@ extern cvar_t *cl_shownet;
 =============================================================================
 
 delta functions with keys
-  
+
 =============================================================================
 */
 
@@ -637,7 +637,7 @@ void MSG_ReadDeltaUsercmdKey( msg_t *msg, int key, const usercmd_t *from, usercm
 =============================================================================
 
 entityState_t communication
-  
+
 =============================================================================
 */
 
@@ -666,7 +666,7 @@ typedef struct {
 // using the stringizing operator to save typing...
 #define	NETF(x) #x,(size_t)&((entityState_t*)0)->x
 
-const netField_t entityStateFields[] = 
+const netField_t entityStateFields[] =
 {
 { NETF(pos.trTime), 32 },
 { NETF(pos.trBase[0]), 0 },
@@ -816,7 +816,7 @@ void MSG_WriteDeltaEntity( msg_t *msg, const entityState_t *from, const entitySt
 				MSG_WriteBits( msg, 0, 1 );
 			} else {
 				MSG_WriteBits( msg, 1, 1 );
-				if ( trunc == fullFloat && trunc + FLOAT_INT_BIAS >= 0 && 
+				if ( trunc == fullFloat && trunc + FLOAT_INT_BIAS >= 0 &&
 					trunc + FLOAT_INT_BIAS < ( 1 << FLOAT_INT_BITS ) ) {
 					// send as small integer
 					MSG_WriteBits( msg, 0, 1 );
@@ -873,7 +873,7 @@ void MSG_ReadDeltaEntity( msg_t *msg, const entityState_t *from, entityState_t *
 
 	// check for a remove
 	if ( MSG_ReadBits( msg, 1 ) == 1 ) {
-		Com_Memset( to, 0, sizeof( *to ) );	
+		Com_Memset( to, 0, sizeof( *to ) );
 		to->number = MAX_GENTITIES - 1;
 #ifndef DEDICATED
 		if ( cl_shownet && ( cl_shownet->integer >= 2 || cl_shownet->integer == -1 ) ) {
@@ -923,14 +923,14 @@ void MSG_ReadDeltaEntity( msg_t *msg, const entityState_t *from, entityState_t *
 			if ( field->bits == 0 ) {
 				// float
 				if ( MSG_ReadBits( msg, 1 ) == 0 ) {
-						*(float *)toF = 0.0f; 
+						*(float *)toF = 0.0f;
 				} else {
 					if ( MSG_ReadBits( msg, 1 ) == 0 ) {
 						// integral float
 						trunc = MSG_ReadBits( msg, FLOAT_INT_BITS );
 						// bias to allow equal parts positive and negative
 						trunc -= FLOAT_INT_BIAS;
-						*(float *)toF = trunc; 
+						*(float *)toF = trunc;
 						if ( print ) {
 							Com_Printf( "%s:%i ", field->name, trunc );
 						}
@@ -985,7 +985,7 @@ plyer_state_t communication
 // using the stringizing operator to save typing...
 #define	PSF(x) #x,(size_t)&((playerState_t*)0)->x
 
-netField_t	playerStateFields[] = 
+netField_t	playerStateFields[] =
 {
 { PSF(commandTime), 32 },
 { PSF(origin[0]), 0 },
@@ -1090,7 +1090,7 @@ void MSG_WriteDeltaPlayerstate( msg_t *msg, const playerState_t *from, const pla
 			fullFloat = *(float *)toF;
 			trunc = (int)fullFloat;
 
-			if ( trunc == fullFloat && trunc + FLOAT_INT_BIAS >= 0 && 
+			if ( trunc == fullFloat && trunc + FLOAT_INT_BIAS >= 0 &&
 				trunc + FLOAT_INT_BIAS < ( 1 << FLOAT_INT_BITS ) ) {
 				// send as small integer
 				MSG_WriteBits( msg, 0, 1 );
@@ -1215,7 +1215,7 @@ void MSG_ReadDeltaPlayerstate( msg_t *msg, const playerState_t *from, playerStat
 		startBit = ( msg->readcount - 1 ) * 8 + msg->bit - GENTITYNUM_BITS;
 	}
 
-#ifndef DEDICATED	
+#ifndef DEDICATED
 	// shownet 2/3 will interleave with other printed info, -2 will
 	// just print the delta records
 	if ( cl_shownet && ( cl_shownet->integer >= 2 || cl_shownet->integer == -2 ) ) {
@@ -1250,7 +1250,7 @@ void MSG_ReadDeltaPlayerstate( msg_t *msg, const playerState_t *from, playerStat
 					trunc = MSG_ReadBits( msg, FLOAT_INT_BITS );
 					// bias to allow equal parts positive and negative
 					trunc -= FLOAT_INT_BIAS;
-					*(float *)toF = trunc; 
+					*(float *)toF = trunc;
 					if ( print ) {
 						Com_Printf( "%s:%i ", field->name, trunc );
 					}

@@ -327,7 +327,7 @@ static void CL_KeyMove( usercmd_t *cmd ) {
 
 	//
 	// adjust for speed key / running
-	// the walking flag is to keep animations consistant
+	// the walking flag is to keep animations consistent
 	// even during acceleration and develeration
 	//
 	if ( in_speed.active ^ cl_run->integer ) {
@@ -540,7 +540,7 @@ static void CL_CmdButtons( usercmd_t *cmd ) {
 	// figure button bits
 	// send a button bit even if the key was pressed and released in
 	// less than a frame
-	//	
+	//
 	for ( i = 0 ; i < ARRAY_LEN( in_buttons ); i++ ) {
 		if ( in_buttons[i].active || in_buttons[i].wasPressed ) {
 			cmd->buttons |= 1 << i;
@@ -697,8 +697,8 @@ static qboolean CL_ReadyToSendPacket( void ) {
 
 	// if we don't have a valid gamestate yet, only send
 	// one packet a second
-	if ( cls.state != CA_ACTIVE && 
-		cls.state != CA_PRIMED && 
+	if ( cls.state != CA_ACTIVE &&
+		cls.state != CA_PRIMED &&
 		!*clc.downloadTempName &&
 		cls.realtime - clc.lastPacketSentTime < 1000 ) {
 		return qfalse;

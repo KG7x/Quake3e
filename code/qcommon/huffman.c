@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INTERNAL_NODE (HMAX+1)
 
 typedef struct nodetype {
-	struct	nodetype *left, *right, *parent; /* tree structure */ 
+	struct	nodetype *left, *right, *parent; /* tree structure */
 	struct	nodetype *next, *prev; /* doubly-linked list */
 	struct	nodetype **head; /* highest ranked node in block */
 	int		weight;
@@ -95,7 +95,7 @@ static void free_ppnode(huff_t* huff, node_t **ppnode) {
 }
 
 /* Swap the location of these two nodes in the tree */
-static void swap (huff_t* huff, node_t *node1, node_t *node2) { 
+static void swap (huff_t* huff, node_t *node1, node_t *node2) {
 	node_t *par1, *par2;
 
 	par1 = node1->parent;
@@ -181,7 +181,7 @@ static void increment(huff_t* huff, node_t *node) {
 	node->weight++;
 	if (node->next && node->next->weight == node->weight) {
 		node->head = node->next->head;
-	} else { 
+	} else {
 		node->head = get_ppnode(huff);
 		*node->head = node;
 	}
@@ -298,7 +298,7 @@ static void send(node_t *node, node_t *child, byte *fout) {
 /* Send a symbol */
 void Huff_transmit (huff_t *huff, int ch, byte *fout) {
 	int i;
-	if (huff->loc[ch] == NULL) { 
+	if (huff->loc[ch] == NULL) {
 		/* node_t hasn't been transmitted, send a NYT, then the symbol */
 		Huff_transmit(huff, NYT, fout);
 		for (i = 7; i >= 0; i--) {
@@ -323,7 +323,7 @@ void Huff_Decompress(msg_t *mbuf, int offset) {
 	}
 
 	Com_Memset(&huff, 0, sizeof(huff_t));
-	// Initialize the tree & list with the NYT node 
+	// Initialize the tree & list with the NYT node
 	huff.tree = huff.lhead = huff.ltail = huff.loc[NYT] = &(huff.nodeList[huff.blocNode++]);
 	huff.tree->symbol = NYT;
 	huff.tree->weight = 0;
@@ -405,7 +405,7 @@ void Huff_Init(huffman_t *huff) {
 	Com_Memset(&huff->compressor, 0, sizeof(huff_t));
 	Com_Memset(&huff->decompressor, 0, sizeof(huff_t));
 
-	// Initialize the tree & list with the NYT node 
+	// Initialize the tree & list with the NYT node
 	huff->decompressor.tree = huff->decompressor.lhead = huff->decompressor.ltail = huff->decompressor.loc[NYT] = &(huff->decompressor.nodeList[huff->decompressor.blocNode++]);
 	huff->decompressor.tree->symbol = NYT;
 	huff->decompressor.tree->weight = 0;

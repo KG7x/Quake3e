@@ -795,7 +795,7 @@ static intptr_t CL_UISystemCalls( intptr_t *args ) {
 		return Sys_Milliseconds();
 
 	case UI_CVAR_REGISTER:
-		Cvar_Register( VMA(1), VMA(2), VMA(3), args[4] ); 
+		Cvar_Register( VMA(1), VMA(2), VMA(3), args[4] );
 		return 0;
 
 	case UI_CVAR_UPDATE:
@@ -976,7 +976,7 @@ static intptr_t CL_UISystemCalls( intptr_t *args ) {
 	case UI_GETCLIENTSTATE:
 		VM_CHECKBOUNDS( uivm, args[1], sizeof( uiClientState_t ) );
 		GetClientState( VMA(1) );
-		return 0;		
+		return 0;
 
 	case UI_GETGLCONFIG:
 		VM_CHECKBOUNDS( uivm, args[1], sizeof( glconfig_t ) );
@@ -1069,7 +1069,7 @@ static intptr_t CL_UISystemCalls( intptr_t *args ) {
 		CLUI_SetCDKey( VMA(1) );
 #endif
 		return 0;
-	
+
 	case UI_SET_PBCLSTATUS:
 		return 0;
 
@@ -1171,7 +1171,7 @@ static intptr_t CL_UISystemCalls( intptr_t *args ) {
 	case UI_TRAP_GETVALUE:
 		VM_CHECKBOUNDS( uivm, args[1], args[2] );
 		return UI_GetValue( VMA(1), args[2], VMA(3) );
-		
+
 	default:
 		Com_Error( ERR_DROP, "Bad UI system trap: %ld", (long int) args[0] );
 
@@ -1249,7 +1249,7 @@ void CL_InitUI( void ) {
 	uivm = VM_Create( VM_UI, CL_UISystemCalls, UI_DllSyscall, interpret );
 	if ( !uivm ) {
 		if ( cl_connectedToPureServer && CL_GameSwitch() ) {
-			// server-side modificaton may require and reference only single custom ui.qvm
+			// server-side modification may require and reference only single custom ui.qvm
 			// so allow referencing everything until we download all files
 			// new gamestate will be requested after downloads complete
 			// which will correct filesystem permissions

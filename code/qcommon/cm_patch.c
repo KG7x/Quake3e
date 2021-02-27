@@ -176,7 +176,7 @@ static qboolean	CM_NeedsSubdivision( const vec3_t a, const vec3_t b, const vec3_
 	// see if the curve is far enough away from the linear mid
 	VectorSubtract( cmid, lmid, delta );
 	dist = VectorLength( delta );
-	
+
 	return dist >= SUBDIVIDE_DISTANCE;
 }
 
@@ -818,7 +818,7 @@ static qboolean CM_ValidateFacet( const facet_t *facet ) {
 	// see if the facet is unreasonably large
 	WindingBounds( w, bounds[0], bounds[1] );
 	FreeWinding( w );
-	
+
 	for ( j = 0 ; j < 3 ; j++ ) {
 		if ( bounds[1][j] - bounds[0][j] > MAX_MAP_BOUNDS ) {
 			return qfalse;		// we must be missing a plane
@@ -1054,13 +1054,13 @@ static void CM_PatchCollideFromGrid( const cGrid_t *grid, patchCollide_t *pf ) {
 	// create the borders for each facet
 	for ( i = 0 ; i < grid->width - 1 ; i++ ) {
 		for ( j = 0 ; j < grid->height - 1 ; j++ ) {
-			 
+
 			borders[EN_TOP] = -1;
 			if ( j > 0 ) {
 				borders[EN_TOP] = gridPlanes[i][j-1][1];
 			} else if ( grid->wrapHeight ) {
 				borders[EN_TOP] = gridPlanes[i][grid->height-2][1];
-			} 
+			}
 			noAdjust[EN_TOP] = ( borders[EN_TOP] == gridPlanes[i][j][0] );
 			if ( borders[EN_TOP] == -1 || noAdjust[EN_TOP] ) {
 				borders[EN_TOP] = CM_EdgePlaneNum( grid, gridPlanes, i, j, 0 );
@@ -1125,7 +1125,7 @@ static void CM_PatchCollideFromGrid( const cGrid_t *grid, patchCollide_t *pf ) {
 					numFacets++;
 				}
 			} else {
-				// two seperate triangles
+				// two separate triangles
 				facet->surfacePlane = gridPlanes[i][j][0];
 				facet->numBorders = 3;
 				facet->borderPlanes[0] = borders[EN_TOP];
@@ -1390,7 +1390,7 @@ static int CM_CheckFacetPlane( const float *plane, const vec3_t start, const vec
 		return qfalse;
 	}
 
-	// if it doesn't cross the plane, the plane isn't relevent
+	// if it doesn't cross the plane, the plane isn't relevant
 	if (d1 <= 0 && d2 <= 0 ) {
 		return qtrue;
 	}
@@ -1457,7 +1457,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
 		VectorCopy(pp->plane, plane);
 		plane[3] = pp->plane[3];
 		if ( tw->sphere.use ) {
-			// adjust the plane distance apropriately for radius
+			// adjust the plane distance appropriately for radius
 			plane[3] += tw->sphere.radius;
 
 			// find the closest point on the capsule to the plane
@@ -1496,7 +1496,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
 				plane[3] = pp->plane[3];
 			}
 			if ( tw->sphere.use ) {
-				// adjust the plane distance apropriately for radius
+				// adjust the plane distance appropriately for radius
 				plane[3] += tw->sphere.radius;
 
 				// find the closest point on the capsule to the plane
@@ -1585,7 +1585,7 @@ qboolean CM_PositionTestInPatchCollide( traceWork_t *tw, const struct patchColli
 		VectorCopy(pp->plane, plane);
 		plane[3] = pp->plane[3];
 		if ( tw->sphere.use ) {
-			// adjust the plane distance apropriately for radius
+			// adjust the plane distance appropriately for radius
 			plane[3] += tw->sphere.radius;
 
 			// find the closest point on the capsule to the plane
@@ -1618,7 +1618,7 @@ qboolean CM_PositionTestInPatchCollide( traceWork_t *tw, const struct patchColli
 				plane[3] = pp->plane[3];
 			}
 			if ( tw->sphere.use ) {
-				// adjust the plane distance apropriately for radius
+				// adjust the plane distance appropriately for radius
 				plane[3] += tw->sphere.radius;
 
 				// find the closest point on the capsule to the plane

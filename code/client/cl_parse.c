@@ -29,7 +29,7 @@ static const char *svc_strings[256] = {
 	"svc_nop",
 	"svc_gamestate",
 	"svc_configstring",
-	"svc_baseline",	
+	"svc_baseline",
 	"svc_serverCommand",
 	"svc_download",
 	"svc_snapshot",
@@ -128,7 +128,7 @@ static void CL_ParsePacketEntities( msg_t *msg, const clSnapshot_t *oldframe, cl
 				Com_Printf ("%3i:  unchanged: %i\n", msg->readcount, oldnum);
 			}
 			CL_DeltaEntity( msg, newframe, oldnum, oldstate, qtrue );
-			
+
 			oldindex++;
 
 			if ( oldindex >= oldframe->numEntities ) {
@@ -176,7 +176,7 @@ static void CL_ParsePacketEntities( msg_t *msg, const clSnapshot_t *oldframe, cl
 			Com_Printf ("%3i:  unchanged: %i\n", msg->readcount, oldnum);
 		}
 		CL_DeltaEntity( msg, newframe, oldnum, oldstate, qtrue );
-		
+
 		oldindex++;
 
 		if ( oldindex >= oldframe->numEntities ) {
@@ -237,7 +237,7 @@ static void CL_ParseSnapshot( msg_t *msg ) {
 	// If the frame is delta compressed from data that we
 	// no longer have available, we must suck up the rest of
 	// the frame, but not use it, then ask for a non-compressed
-	// message 
+	// message
 	if ( newSnap.deltaNum <= 0 ) {
 		newSnap.valid = qtrue;		// uncompressed frame
 		old = NULL;
@@ -260,13 +260,13 @@ static void CL_ParseSnapshot( msg_t *msg ) {
 
 	// read areamask
 	newSnap.areabytes = MSG_ReadByte( msg );
-	
+
 	if ( newSnap.areabytes > sizeof(newSnap.areamask) )
 	{
 		Com_Error( ERR_DROP,"CL_ParseSnapshot: Invalid size %d for areamask", newSnap.areabytes );
 		return;
 	}
-	
+
 	MSG_ReadData( msg, &newSnap.areamask, newSnap.areabytes );
 
 	// read playerinfo
@@ -411,7 +411,7 @@ void CL_SystemInfoChanged( qboolean onlyGame ) {
 	s = systemInfo;
 	while ( s ) {
 		int cvar_flags;
-		
+
 		Info_NextPair( &s, key, value );
 		if ( !key[0] ) {
 			break;
@@ -429,7 +429,7 @@ void CL_SystemInfoChanged( qboolean onlyGame ) {
 		}
 
 		if ( !Q_stricmp( key, "fs_game" ) ) {
-			continue; // already procesed
+			continue; // already processed
 		}
 
 		if((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT)
@@ -538,7 +538,7 @@ static void CL_ParseGamestate( msg_t *msg ) {
 		if ( cmd == svc_EOF ) {
 			break;
 		}
-		
+
 		if ( cmd == svc_configstring ) {
 			int		len;
 
@@ -551,7 +551,7 @@ static void CL_ParseGamestate( msg_t *msg ) {
 			len = strlen( s );
 
 			if ( len + 1 + cl.gameState.dataCount > MAX_GAMESTATE_CHARS ) {
-				Com_Error( ERR_DROP, "MAX_GAMESTATE_CHARS exceeded: %i", 
+				Com_Error( ERR_DROP, "MAX_GAMESTATE_CHARS exceeded: %i",
 					len + 1 + cl.gameState.dataCount );
 			}
 
@@ -626,7 +626,7 @@ checks for valid ZIP signature
 returns qtrue for normal and empty archives
 =====================
 */
-qboolean CL_ValidPakSignature( const byte *data, int len ) 
+qboolean CL_ValidPakSignature( const byte *data, int len )
 {
 	// maybe it is not 100% correct to check for file size here
 	// because we may receive more data in future packets
@@ -716,7 +716,7 @@ static void CL_ParseDownload( msg_t *msg ) {
 
 		clc.download = FS_SV_FOpenFileWrite( clc.downloadTempName );
 
-		if ( clc.download == FS_INVALID_HANDLE ) 
+		if ( clc.download == FS_INVALID_HANDLE )
 		{
 			Com_Printf( "Could not create %s\n", clc.downloadTempName );
 			CL_AddReliableCommand( "stopdl", qfalse );
@@ -830,7 +830,7 @@ void CL_ParseServerMessage( msg_t *msg ) {
 
 	// get the reliable sequence acknowledge number
 	clc.reliableAcknowledge = MSG_ReadLong( msg );
-	// 
+	//
 	if ( clc.reliableAcknowledge < clc.reliableSequence - MAX_RELIABLE_COMMANDS ) {
 		clc.reliableAcknowledge = clc.reliableSequence;
 	}

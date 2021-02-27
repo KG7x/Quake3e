@@ -183,7 +183,7 @@ void CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *hei
    * output image dimensions available, as well as the output colormap
    * if we asked for color quantization.
    * In this example, we need to make an output work buffer of the right size.
-   */ 
+   */
   /* JSAMPLEs per row in output buffer */
 
   pixelcount = cinfo.output_width * cinfo.output_height;
@@ -232,7 +232,7 @@ void CL_LoadJPG( const char *filename, unsigned char **pic, int *width, int *hei
   dindex = memcount;
 
   do
-  {	
+  {
     buf[--dindex] = 255;
     buf[--dindex] = buf[--sindex];
     buf[--dindex] = buf[--sindex];

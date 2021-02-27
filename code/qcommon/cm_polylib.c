@@ -223,7 +223,7 @@ winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 	}
 	if (x==-1)
 		Com_Error (ERR_DROP, "BaseWindingForPlane: no axis found");
-		
+
 	VectorCopy (vec3_origin, vup);
 	switch (x)
 	{
@@ -309,7 +309,7 @@ winding_t	*ReverseWinding (winding_t *w)
 ClipWindingEpsilon
 =============
 */
-void	ClipWindingEpsilon (winding_t *in, vec3_t normal, vec_t dist, 
+void	ClipWindingEpsilon (winding_t *in, vec3_t normal, vec_t dist,
 				vec_t epsilon, winding_t **front, winding_t **back)
 {
 	vec_t	dists[MAX_POINTS_ON_WINDING+4];
@@ -583,7 +583,7 @@ void CheckWinding (winding_t *w)
 				Com_Error (ERR_DROP, "CheckFace: BUGUS_RANGE: %f",p1[j]);
 
 		j = i+1 == w->numpoints ? 0 : i+1;
-		
+
 	// check the point is on the face plane
 		d = DotProduct (p1, facenormal) - facedist;
 		if (d < -ON_EPSILON || d > ON_EPSILON)

@@ -58,7 +58,7 @@ typedef struct {
 	vec4_t	color;
 
 	int		viswidth;
-	int		vispage;		
+	int		vispage;
 
 	qboolean newline;
 
@@ -234,7 +234,7 @@ static void Con_Dump_f( void )
 	// write the remaining lines
 	buffer[ bufferlen - 1 ] = '\0';
 
-	for ( i = 0; i < n ; i++, l++ ) 
+	for ( i = 0; i < n ; i++, l++ )
 	{
 		line = con.text + (l % con.totallines) * con.linewidth;
 		// store line
@@ -334,16 +334,16 @@ void Con_CheckResize( void )
 			numchars = con.linewidth;
 
 		if ( oldcurrent > oldtotallines )
-			numlines = oldtotallines;	
+			numlines = oldtotallines;
 		else
-			numlines = oldcurrent + 1;	
+			numlines = oldcurrent + 1;
 
 		if ( numlines > con.totallines )
 			numlines = con.totallines;
 
 		Com_Memcpy( tbuf, con.text, CON_TEXTSIZE * sizeof( short ) );
 
-		for ( i = 0; i < CON_TEXTSIZE; i++ ) 
+		for ( i = 0; i < CON_TEXTSIZE; i++ )
 			con.text[i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
 
 		for ( i = 0; i < numlines; i++ )
@@ -380,7 +380,7 @@ void Cmd_CompleteTxtName( char *args, int argNum ) {
 Con_Init
 ================
 */
-void Con_Init( void ) 
+void Con_Init( void )
 {
 	con_notifytime = Cvar_Get( "con_notifytime", "3", 0 );
 	con_conspeed = Cvar_Get( "scr_conspeed", "3", 0 );
@@ -421,7 +421,7 @@ void Con_Shutdown( void )
 Con_Fixup
 ===============
 */
-void Con_Fixup( void ) 
+void Con_Fixup( void )
 {
 	int filled;
 
@@ -448,7 +448,7 @@ Con_Linefeed
 Move to newline only when we _really_ need this
 ===============
 */
-void Con_NewLine( void ) 
+void Con_NewLine( void )
 {
 	short *s;
 	int i;
@@ -755,7 +755,7 @@ void Con_DrawSolidConsole( float frac ) {
 		// custom console background color
 		if ( cl_conColor->string[0] ) {
 			// track changes
-			if ( strcmp( cl_conColor->string, conColorString ) ) 
+			if ( strcmp( cl_conColor->string, conColorString ) )
 			{
 				Q_strncpyz( conColorString, cl_conColor->string, sizeof( conColorString ) );
 				Q_strncpyz( buf, cl_conColor->string, sizeof( buf ) );
@@ -807,13 +807,13 @@ void Con_DrawSolidConsole( float frac ) {
 	}
 
 #ifdef USE_CURL
-	if ( download.progress[ 0 ] ) 
+	if ( download.progress[ 0 ] )
 	{
 		currentColorIndex = ColorIndex( COLOR_CYAN );
 		re.SetColor( g_color_table[ currentColorIndex ] );
 
 		i = strlen( download.progress );
-		for ( x = 0 ; x < i ; x++ ) 
+		for ( x = 0 ; x < i ; x++ )
 		{
 			SCR_DrawSmallChar( ( x + 1 ) * smallchar_width,
 				lines - smallchar_height, download.progress[x] );
@@ -894,7 +894,7 @@ Con_RunConsole
 Scroll it up or down
 ==================
 */
-void Con_RunConsole( void ) 
+void Con_RunConsole( void )
 {
 	// decide on the destination height of the console
 	if ( Key_GetCatcher( ) & KEYCATCH_CONSOLE )

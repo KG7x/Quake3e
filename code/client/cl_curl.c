@@ -230,13 +230,13 @@ static size_t CL_cURL_CallbackWrite( void *buffer, size_t size, size_t nmemb, vo
 {
 	if ( clc.download == FS_INVALID_HANDLE ) {
 		if ( !CL_ValidPakSignature( buffer, size*nmemb ) ) {
-			Com_Error( ERR_DROP, "CL_cURL_CallbackWrite: invalid pak signature for %s", 
+			Com_Error( ERR_DROP, "CL_cURL_CallbackWrite: invalid pak signature for %s",
 				clc.downloadName );
 			return (size_t)-1;
 		}
 		clc.download = FS_SV_FOpenFileWrite( clc.downloadTempName );
 		if ( clc.download == FS_INVALID_HANDLE ) {
-			Com_Error( ERR_DROP, "CL_cURL_CallbackWrite: failed to open %s for writing", 
+			Com_Error( ERR_DROP, "CL_cURL_CallbackWrite: failed to open %s for writing",
 				clc.downloadTempName );
 			return (size_t)-1;
 		}
@@ -273,7 +273,7 @@ CURLcode qcurl_easy_setopt_warn(CURL *curl, CURLoption option, ...)
 	return result;
 }
 
-static void CL_cURL_CloseDownload( void ) 
+static void CL_cURL_CloseDownload( void )
 {
 	if ( clc.download != FS_INVALID_HANDLE )
 		FS_FCloseFile( clc.download );
@@ -383,8 +383,7 @@ void CL_cURL_PerformDownload( void )
 	else {
 		long code;
 
-		qcurl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE,
-			&code);	
+		qcurl_easy_getinfo(msg->easy_handle, CURLINFO_RESPONSE_CODE, &code);
 		Com_Error(ERR_DROP, "Download Error: %s Code: %ld URL: %s",
 			qcurl_easy_strerror(msg->data.result),
 			code, clc.downloadURL);
@@ -423,7 +422,7 @@ const char* stristr( const char *source, const char *target )
 	pn = source;
 	p1 = source;
 	p2 = target;
-	
+
 	while ( *++p2 )
 	{
 	    pn++;
@@ -497,7 +496,7 @@ int replace1( const char src, const char dst, char *str )
 Com_DL_Done
 =================
 */
-void Com_DL_Done( download_t *dl ) 
+void Com_DL_Done( download_t *dl )
 {
 	if ( dl->func.lib )
 		Sys_UnloadLibrary( dl->func.lib );
@@ -621,9 +620,9 @@ Com_DL_Cleanup
 */
 void Com_DL_Cleanup( download_t *dl )
 {
-	if( dl->cURLM ) 
+	if( dl->cURLM )
 	{
-		if ( dl->cURL ) 
+		if ( dl->cURL )
 		{
 			dl->func.multi_remove_handle( dl->cURLM, dl->cURL );
 			dl->func.easy_cleanup( dl->cURL );
@@ -632,12 +631,12 @@ void Com_DL_Cleanup( download_t *dl )
 		dl->cURLM = NULL;
 		dl->cURL = NULL;
 	}
-	else if( dl->cURL ) 
+	else if( dl->cURL )
 	{
 		dl->func.easy_cleanup( dl->cURL );
 		dl->cURL = NULL;
 	}
-	if ( dl->fHandle != FS_INVALID_HANDLE ) 
+	if ( dl->fHandle != FS_INVALID_HANDLE )
 	{
 		FS_FCloseFile( dl->fHandle );
 		dl->fHandle = FS_INVALID_HANDLE;
@@ -735,15 +734,15 @@ static size_t Com_DL_CallbackWrite( void *ptr, size_t size, size_t nmemb, void *
 
 	if ( dl->fHandle == FS_INVALID_HANDLE )
 	{
-		if ( !CL_ValidPakSignature( ptr, size*nmemb ) ) 
+		if ( !CL_ValidPakSignature( ptr, size*nmemb ) )
 		{
-			Com_Printf( S_COLOR_YELLOW "Com_DL_CallbackWrite(): invalid pak signature for %s.\n", 
+			Com_Printf( S_COLOR_YELLOW "Com_DL_CallbackWrite(): invalid pak signature for %s.\n",
 				dl->Name );
 			return (size_t)-1;
 		}
 
 		dl->fHandle = FS_SV_FOpenFileWrite( dl->TempName );
-		if ( dl->fHandle == FS_INVALID_HANDLE ) 
+		if ( dl->fHandle == FS_INVALID_HANDLE )
 		{
 			return (size_t)-1;
 		}
@@ -786,7 +785,7 @@ static size_t Com_DL_HeaderCallback( void *ptr, size_t size, size_t nmemb, void 
 	download_t *dl;
 	int len;
 
-	if ( size*nmemb >= sizeof( header ) ) 
+	if ( size*nmemb >= sizeof( header ) )
 	{
 		Com_Printf( S_COLOR_RED "Com_DL_HeaderCallback: header is too large." );
 		return (size_t)-1;
@@ -800,11 +799,11 @@ static size_t Com_DL_HeaderCallback( void *ptr, size_t size, size_t nmemb, void 
 	//Com_Printf( "h: %s\n--------------------------\n", header );
 
 	s = (char*)stristr( header, "content-disposition:" );
-	if ( s ) 
+	if ( s )
 	{
 		s += 20; // strlen( "content-disposition:" )
 		s = (char*)stristr( s, "filename=" );
-		if ( s ) 
+		if ( s )
 		{
 			s += 9; // strlen( "filename=" )
 
@@ -822,7 +821,7 @@ static size_t Com_DL_HeaderCallback( void *ptr, size_t size, size_t nmemb, void 
 				quote = '\0';
 
 			// copy filename
-			while ( *s != '\0' && *s != quote ) 
+			while ( *s != '\0' && *s != quote )
 				*d++ = *s++;
 			len = d - name;
 			*d++ = '\0';
@@ -865,7 +864,7 @@ qboolean Com_DL_Begin( download_t *dl, const char *localName, const char *remote
 
 	Com_DL_Cleanup( dl );
 
-	if ( !Com_DL_Init( dl ) ) 
+	if ( !Com_DL_Init( dl ) )
 	{
 		Com_Printf( S_COLOR_YELLOW "Error initializing cURL library\n" );
 		return qfalse;
@@ -915,7 +914,7 @@ qboolean Com_DL_Begin( download_t *dl, const char *localName, const char *remote
 	// try to extract game path from localName
 	// dl->Name should contain only pak name without game dir and extension
 	s = strrchr( localName, '/' );
-	if ( s ) 
+	if ( s )
 		Q_strncpyz( dl->Name, s+1, sizeof( dl->Name ) );
 	else
 		Q_strncpyz( dl->Name, localName, sizeof( dl->Name ) );
@@ -927,7 +926,7 @@ qboolean Com_DL_Begin( download_t *dl, const char *localName, const char *remote
 		return qfalse;
 	}
 
-	Com_sprintf( dl->TempName, sizeof( dl->TempName ), 
+	Com_sprintf( dl->TempName, sizeof( dl->TempName ),
 		"%s/%s.%08x.tmp", dl->gameDir, dl->Name, rand() | (rand() << 16) );
 
 	if ( com_developer->integer )
@@ -940,7 +939,7 @@ qboolean Com_DL_Begin( download_t *dl, const char *localName, const char *remote
 	dl->func.easy_setopt( dl->cURL, CURLOPT_USERAGENT, Q3_VERSION );
 	dl->func.easy_setopt( dl->cURL, CURLOPT_WRITEFUNCTION, Com_DL_CallbackWrite );
 	dl->func.easy_setopt( dl->cURL, CURLOPT_WRITEDATA, dl );
-	if ( dl->headerCheck ) 
+	if ( dl->headerCheck )
 	{
 		dl->func.easy_setopt( dl->cURL, CURLOPT_HEADERFUNCTION, Com_DL_HeaderCallback );
 		dl->func.easy_setopt( dl->cURL, CURLOPT_HEADERDATA, dl );
@@ -957,12 +956,12 @@ qboolean Com_DL_Begin( download_t *dl, const char *localName, const char *remote
 
 	if ( !dl->cURLM )
 	{
-		Com_DL_Cleanup( dl );	
+		Com_DL_Cleanup( dl );
 		Com_Printf( S_COLOR_RED "Com_DL_Begin: multi_init() failed\n" );
 		return qfalse;
 	}
 
-	if ( dl->func.multi_add_handle( dl->cURLM, dl->cURL ) != CURLM_OK ) 
+	if ( dl->func.multi_add_handle( dl->cURLM, dl->cURL ) != CURLM_OK )
 	{
 		Com_DL_Cleanup( dl );
 		Com_Printf( S_COLOR_RED "Com_DL_Begin: multi_add_handle() failed\n" );
@@ -1048,7 +1047,7 @@ qboolean Com_DL_Perform( download_t *dl )
 			if ( cls.state == CA_CONNECTED && !clc.demoplaying )
 			{
 				CL_AddReliableCommand( "donedl", qfalse ); // get new gamestate info from server
-			} 
+			}
 			else if ( clc.demoplaying )
 			{
 				// FIXME: there might be better solution than vid_restart

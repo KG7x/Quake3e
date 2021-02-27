@@ -626,7 +626,7 @@ so sound doesn't stutter.
 */
 static void S_Base_ClearSoundBuffer( void ) {
 	int		clear;
-		
+
 	if (!s_soundStarted)
 		return;
 
@@ -645,7 +645,7 @@ static void S_Base_ClearSoundBuffer( void ) {
 		clear = 0;
 
 	SNDDMA_BeginPainting();
-	
+
 	if ( dma.buffer )
 		Com_Memset(dma.buffer, clear, dma.samples * dma.samplebits/8);
 
@@ -1033,7 +1033,7 @@ void S_Base_Respatialize( int entityNum, const vec3_t head, vec3_t axis[3], int 
 	VectorCopy(axis[1], listener_axis[1]);
 	VectorCopy(axis[2], listener_axis[2]);
 
-	// update spatialization for dynamic sounds	
+	// update spatialization for dynamic sounds
 	ch = s_channels;
 	for ( i = 0 ; i < MAX_CHANNELS ; i++, ch++ ) {
 		if ( !ch->thesfx ) {
@@ -1161,7 +1161,7 @@ static void S_GetSoundtime( void )
 	if (samplepos < oldsamplepos)
 	{
 		buffers++;					// buffer wrapped
-		
+
 		if (s_paintedtime > 0x40000000)
 		{	// time to chop things off to avoid 32 bit limits
 			buffers = 0;
@@ -1443,7 +1443,7 @@ static void S_Base_Shutdown( void ) {
 
 	SNDDMA_Shutdown();
 
-	// release sound buffers only when switching to dedicated 
+	// release sound buffers only when switching to dedicated
 	// to avoid redundand reallocation at client restart
 	if ( com_dedicated->integer )
 		SND_shutdown();

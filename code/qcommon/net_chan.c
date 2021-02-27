@@ -241,7 +241,7 @@ qboolean Netchan_Process( netchan_t *chan, msg_t *msg ) {
 	// XOR unscramble all data in the packet after the header
 //	Netchan_UnScramblePacket( msg );
 
-	// get sequence numbers		
+	// get sequence numbers
 	MSG_BeginReadingOOB( msg );
 	sequence = MSG_ReadLong( msg );
 
@@ -318,8 +318,8 @@ qboolean Netchan_Process( netchan_t *chan, msg_t *msg ) {
 
 
 	//
-	// if this is the final framgent of a reliable message,
-	// bump incoming_reliable_sequence 
+	// if this is the final fragment of a reliable message,
+	// bump incoming_reliable_sequence
 	//
 	if ( fragmented ) {
 		// TTimo
@@ -353,7 +353,7 @@ qboolean Netchan_Process( netchan_t *chan, msg_t *msg ) {
 			return qfalse;
 		}
 
-		Com_Memcpy( chan->fragmentBuffer + chan->fragmentLength, 
+		Com_Memcpy( chan->fragmentBuffer + chan->fragmentLength,
 			msg->data + msg->readcount, fragmentLength );
 
 		chan->fragmentLength += fragmentLength;
@@ -384,7 +384,7 @@ qboolean Netchan_Process( netchan_t *chan, msg_t *msg ) {
 		// TTimo
 		// clients were not acking fragmented messages
 		chan->incomingSequence = sequence;
-		
+
 		return qtrue;
 	}
 
@@ -488,7 +488,7 @@ static void NET_QueuePacket( int length, const void *data, const netadr_t *to, i
 	Com_Memcpy(new->data, data, length);
 	new->length = length;
 	new->to = *to;
-	new->release = Sys_Milliseconds() + (int)((float)offset / com_timescale->value);	
+	new->release = Sys_Milliseconds() + (int)((float)offset / com_timescale->value);
 	new->next = NULL;
 
 	if(!packetQueue) {
@@ -656,7 +656,7 @@ int NET_StringToAdr( const char *s, netadr_t *a, netadrtype_t family )
 	{
 		// look for a port number
 		port = strchr( base, ':' );
-		
+
 		if ( port ) {
 			*port = '\0';
 			port++;

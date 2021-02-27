@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #		endif
 #	else // WINVER >= 0x501
 
-#if	1	// Windows2000 compatibility 
+#if	1	// Windows2000 compatibility
 #		include <ws2tcpip.h>
 #		include <wspiapi.h>
 #else
@@ -293,7 +293,7 @@ static struct addrinfo *SearchAddrInfo( struct addrinfo *hints, sa_family_t fami
 
 		hints = hints->ai_next;
 	}
-	
+
 	return NULL;
 }
 
@@ -468,7 +468,7 @@ qboolean NET_CompareBaseAdrMask( const netadr_t *a, const netadr_t *b, unsigned 
 	{
 		addra = (byte *) &a->ipv._4;
 		addrb = (byte *) &b->ipv._4;
-		
+
 		if (netmask > 32)
 			netmask = 32;
 	}
@@ -477,7 +477,7 @@ qboolean NET_CompareBaseAdrMask( const netadr_t *a, const netadr_t *b, unsigned 
 	{
 		addra = (byte *) &a->ipv._6;
 		addrb = (byte *) &b->ipv._6;
-		
+
 		if (netmask > 128)
 			netmask = 128;
 	}
@@ -585,7 +585,7 @@ qboolean NET_CompareAdr( const netadr_t *a, const netadr_t *b )
 }
 
 
-qboolean NET_IsLocalAddress( const netadr_t *adr ) 
+qboolean NET_IsLocalAddress( const netadr_t *adr )
 {
 	return adr->type == NA_LOOPBACK;
 }
@@ -1079,7 +1079,7 @@ static void NET_SetMulticast6( void )
 			   "please set cvar %s to a sane value.\n", net_mcast6addr->name);
 
 		Cvar_SetIntegerValue( net_enabled->name, net_enabled->integer | NET_DISABLEMCAST );
-		
+
 		return;
 	}
 
@@ -1407,7 +1407,7 @@ static void NET_GetLocalAddress( void )
 		}
 
 		freeifaddrs( ifap );
-		
+
 		Sys_ShowIP();
 	}
 }
@@ -1579,7 +1579,7 @@ static qboolean NET_GetCvars( void ) {
 	net_port = Cvar_Get( "net_port", va( "%i", PORT_SERVER ), CVAR_LATCH | CVAR_NORESTART );
 	modified += net_port->modified;
 	net_port->modified = qfalse;
-	
+
 #ifdef USE_IPV6
 	net_ip6 = Cvar_Get( "net_ip6", "::", CVAR_LATCH );
 	modified += net_ip6->modified;
@@ -1683,7 +1683,7 @@ static void NET_Config( qboolean enableNetworking ) {
 		{
 			if(multicast6_socket != ip6_socket)
 				closesocket(multicast6_socket);
-				
+
 			multicast6_socket = INVALID_SOCKET;
 		}
 
@@ -1861,7 +1861,7 @@ qboolean NET_Sleep( int timeout )
 #ifndef _WIN32
 		if ( socketError != EINTR )
 #endif
-		Com_Printf( S_COLOR_YELLOW "Warning: select() syscall failed: %s\n", 
+		Com_Printf( S_COLOR_YELLOW "Warning: select() syscall failed: %s\n",
 			NET_ErrorString() );
 	}
 

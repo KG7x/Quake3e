@@ -1,6 +1,6 @@
 
 ; this is mostly copy-pasted x86-version with x86_64-related fixes and comments
-; runs about 4x times faster than C version 
+; runs about 4x times faster than C version
 ; saves about 3M ticks each second
 
 .code
@@ -17,8 +17,8 @@ S_WriteLinearBlastStereo16_SSE_x64 PROC
 
 	test ebx,ebx
 	jz	LExit
-	mov ecx,esi  ; try to align source memory to 64 bytes boundary 
-	and ecx,63 
+	mov ecx,esi  ; try to align source memory to 64 bytes boundary
+	and ecx,63
 	jz LMain     ; if already aligned - goto main loop
 	and ecx,3
 	jnz LTail    ; if not dword-aligned - tail work & exit, should never happen though
