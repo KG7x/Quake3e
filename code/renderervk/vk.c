@@ -124,7 +124,7 @@ PFN_vkDebugMarkerSetObjectNameEXT				qvkDebugMarkerSetObjectNameEXT;
 ////////////////////////////////////////////////////////////////////////////
 
 // forward declaration
-VkPipeline create_pipeline( const Vk_Pipeline_Def *def, uint32_t renderPassIndex );
+VkPipeline create_pipeline( const Vk_Pipeline_Def *def, renderPass_t renderPassIndex );
 
 static uint32_t find_memory_type( VkPhysicalDevice physical_device, uint32_t memory_type_bits, VkMemoryPropertyFlags properties ) {
 	VkPhysicalDeviceMemoryProperties memory_properties;
@@ -570,7 +570,11 @@ static void vk_create_render_passes( void )
 		attachments[0].flags = 0;
 		attachments[0].format = vk.present_format.format;
 		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
+#ifdef USE_BUFFER_CLEAR
+		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+#else
 		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;	// Assuming this will be completely overwritten
+#endif
 		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;		// needed for presentation
 		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -583,7 +587,16 @@ static void vk_create_render_passes( void )
 		attachments[0].flags = 0;
 		attachments[0].format = vk.color_format;
 		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;	// Assuming this will be completely overwritten
+
+#ifdef USE_BUFFER_CLEAR
+		if ( vk.msaaActive )
+			attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;	// Assuming this will be completely overwritten
+		else
+			attachments[ 0 ].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+#else
+		attachments[ 0 ].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;	// Assuming this will be completely overwritten
+#endif
+
 		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;   // needed for next render pass
 		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -634,7 +647,11 @@ static void vk_create_render_passes( void )
 		attachments[2].flags = 0;
 		attachments[2].format = vk.color_format;
 		attachments[2].samples = vkSamples;
+#ifdef USE_BUFFER_CLEAR
+		attachments[2].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+#else
 		attachments[2].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+#endif
 		if ( r_bloom->integer ) {
 			attachments[2].storeOp = VK_ATTACHMENT_STORE_OP_STORE; // keep it for post-bloom pass
 		} else {
@@ -660,31 +677,46 @@ static void vk_create_render_passes( void )
 
 	Com_Memset( &deps, 0, sizeof( deps ) );
 
+	if ( r_fbo->integer == 0 )
+	{
+		desc.dependencyCount = 1;
+		desc.pDependencies = deps;
+
+		deps[ 0 ].srcSubpass = VK_SUBPASS_EXTERNAL;
+		deps[ 0 ].dstSubpass = 0;
+		deps[ 0 ].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;	// What pipeline stage is waiting on the dependency
+		deps[ 0 ].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;	// What pipeline stage is waiting on the dependency
+		deps[ 0 ].srcAccessMask = 0;											// What access scopes are influence the dependency
+		deps[ 0 ].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT; // What access scopes are waiting on the dependency
+		deps[ 0 ].dependencyFlags = 0;
+
+		VK_CHECK( qvkCreateRenderPass( device, &desc, NULL, &vk.render_pass.main ) );
+		SET_OBJECT_NAME( vk.render_pass.main, "render pass - main", VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT );
+
+		return;
+	}
+
+	desc.dependencyCount = 2;
+	desc.pDependencies = deps;
+
 	deps[0].srcSubpass = VK_SUBPASS_EXTERNAL;
 	deps[0].dstSubpass = 0;
 	deps[0].srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;			// What pipeline stage must have completed for the dependency
 	deps[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;	// What pipeline stage is waiting on the dependency
 	deps[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT;						// What access scopes are influence the dependency
-	deps[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;			// What access scopes are waiting on the dependency
+	deps[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT; // What access scopes are waiting on the dependency
 	deps[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;					// Only need the current fragment (or tile) synchronized, not the whole framebuffer
 
 	deps[1].srcSubpass = 0;
 	deps[1].dstSubpass = VK_SUBPASS_EXTERNAL;
 	deps[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;	// Fragment data has been written
 	deps[1].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;			// Don't start shading until data is available
-	deps[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;			// Waiting for color data to be written
+	deps[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT; // Waiting for color data to be written
 	deps[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;						// Don't read things from the shader before ready
 	deps[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;					// Only need the current fragment (or tile) synchronized, not the whole framebuffer
 
-	desc.dependencyCount = 2;
-	desc.pDependencies = deps;
-
 	VK_CHECK( qvkCreateRenderPass( device, &desc, NULL, &vk.render_pass.main ) );
-
 	SET_OBJECT_NAME( vk.render_pass.main, "render pass - main", VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT );
-
-	if ( r_fbo->integer == 0 )
-		return;
 
 	if ( r_bloom->integer ) {
 
@@ -800,8 +832,11 @@ static void vk_create_render_passes( void )
 	attachments[0].flags = 0;
 	attachments[0].format = vk.color_format;
 	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-#ifdef _DEBUG
-	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+#ifdef USE_BUFFER_CLEAR
+	if ( vk.screenMapSamples > VK_SAMPLE_COUNT_1_BIT )
+		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	else
+		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 #else
 	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // Assuming this will be completely overwritten
 #endif
@@ -850,7 +885,11 @@ static void vk_create_render_passes( void )
 		attachments[2].flags = 0;
 		attachments[2].format = vk.color_format;
 		attachments[2].samples = vk.screenMapSamples;
+#ifdef USE_BUFFER_CLEAR
+		attachments[2].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+#else
 		attachments[2].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+#endif
 		attachments[2].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		attachments[2].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachments[2].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -2059,7 +2098,7 @@ void vk_init_descriptors( void )
 	VkDescriptorSetAllocateInfo alloc;
 	VkDescriptorBufferInfo info;
 	VkWriteDescriptorSet desc;
-	int i;
+	uint32_t i;
 
 	alloc.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	alloc.pNext = NULL;
@@ -2474,259 +2513,226 @@ static void vk_create_shader_modules( void )
 static void vk_alloc_persistent_pipelines( void )
 {
 	unsigned int state_bits;
-	Com_Memset( &vk.pipelines, 0, sizeof( vk.pipelines ) );
+	Vk_Pipeline_Def def;
 
-	vk.pipelines_count = 0;
-	vk.pipelines_world_base = 0;
-
+	// skybox
 	{
-		// skybox
-		{
-			Vk_Pipeline_Def def;
+		Com_Memset(&def, 0, sizeof(def));
+		def.shader_type = TYPE_SIGNLE_TEXTURE_IDENTITY;
+		def.face_culling = CT_FRONT_SIDED;
+		def.polygon_offset = qfalse;
+		def.mirror = qfalse;
+		vk.skybox_pipeline = vk_find_pipeline_ext( 0, &def, qtrue );
+	}
 
-			Com_Memset(&def, 0, sizeof(def));
-			def.shader_type = TYPE_SIGNLE_TEXTURE_IDENTITY;
-			def.face_culling = CT_FRONT_SIDED;
-			def.polygon_offset = qfalse;
-			def.mirror = qfalse;
-			vk.skybox_pipeline = vk_find_pipeline_ext( 0, &def, qtrue );
-		}
+	// stencil shadows
+	{
+		cullType_t cull_types[2] = { CT_FRONT_SIDED, CT_BACK_SIDED };
+		qboolean mirror_flags[2] = { qfalse, qtrue };
+		int i, j;
 
-		// Q3 stencil shadows
-		{
-			{
-				cullType_t cull_types[2] = { CT_FRONT_SIDED, CT_BACK_SIDED };
-				qboolean mirror_flags[2] = { qfalse, qtrue };
-				Vk_Pipeline_Def def;
-				int i, j;
+		Com_Memset(&def, 0, sizeof(def));
+		def.polygon_offset = qfalse;
+		def.state_bits = 0;
+		def.shader_type = TYPE_SIGNLE_TEXTURE;
+		def.shadow_phase = SHADOW_EDGES;
 
-				Com_Memset(&def, 0, sizeof(def));
-				def.polygon_offset = qfalse;
-				def.state_bits = 0;
-				def.shader_type = TYPE_SIGNLE_TEXTURE;
-				def.shadow_phase = SHADOW_EDGES;
-
-				for (i = 0; i < 2; i++) {
-					def.face_culling = cull_types[i];
-					for (j = 0; j < 2; j++) {
-						def.mirror = mirror_flags[j];
-						vk.shadow_volume_pipelines[i][j] = vk_find_pipeline_ext( 0, &def, r_shadows->integer ? qtrue: qfalse );
-					}
-				}
-			}
-
-			{
-				Vk_Pipeline_Def def;
-
-				Com_Memset( &def, 0, sizeof( def ) );
-				def.face_culling = CT_FRONT_SIDED;
-				def.polygon_offset = qfalse;
-				def.state_bits = GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO;
-				def.shader_type = TYPE_SIGNLE_TEXTURE;
-				def.mirror = qfalse;
-				def.shadow_phase = SHADOW_FS_QUAD;
-				def.primitives = TRIANGLE_STRIP;
-
-				vk.shadow_finish_pipeline = vk_find_pipeline_ext( 0, &def, r_shadows->integer ? qtrue: qfalse );
+		for (i = 0; i < 2; i++) {
+			def.face_culling = cull_types[i];
+			for (j = 0; j < 2; j++) {
+				def.mirror = mirror_flags[j];
+				vk.shadow_volume_pipelines[i][j] = vk_find_pipeline_ext( 0, &def, r_shadows->integer ? qtrue: qfalse );
 			}
 		}
+	}
+	{
+		Com_Memset( &def, 0, sizeof( def ) );
+		def.face_culling = CT_FRONT_SIDED;
+		def.polygon_offset = qfalse;
+		def.state_bits = GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO;
+		def.shader_type = TYPE_SIGNLE_TEXTURE;
+		def.mirror = qfalse;
+		def.shadow_phase = SHADOW_FS_QUAD;
+		def.primitives = TRIANGLE_STRIP;
+		vk.shadow_finish_pipeline = vk_find_pipeline_ext( 0, &def, r_shadows->integer ? qtrue: qfalse );
+	}
 
-		// fog and dlights
-		{
-			Vk_Pipeline_Def def;
-			unsigned int fog_state_bits[2] = {
-				GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL, // fogPass == FP_EQUAL
-				GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA // fogPass == FP_LE
-			};
-			unsigned int dlight_state_bits[2] = {
-				GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL,	// modulated
-				GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL			// additive
-			};
-			qboolean polygon_offset[2] = { qfalse, qtrue };
-			int i, j, k, l;
+	// fog and dlights
+	{
+		unsigned int fog_state_bits[2] = {
+			GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL, // fogPass == FP_EQUAL
+			GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA // fogPass == FP_LE
+		};
+		unsigned int dlight_state_bits[2] = {
+			GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL,	// modulated
+			GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL			// additive
+		};
+		qboolean polygon_offset[2] = { qfalse, qtrue };
+		int i, j, k, l;
 
-			Com_Memset(&def, 0, sizeof(def));
-			def.shader_type = TYPE_SIGNLE_TEXTURE;
-			def.mirror = qfalse;
+		Com_Memset(&def, 0, sizeof(def));
+		def.shader_type = TYPE_SIGNLE_TEXTURE;
+		def.mirror = qfalse;
 
-			for (i = 0; i < 2; i++) {
-				unsigned fog_state = fog_state_bits[i];
-				unsigned dlight_state = dlight_state_bits[i];
+		for ( i = 0; i < 2; i++ ) {
+			unsigned fog_state = fog_state_bits[ i ];
+			unsigned dlight_state = dlight_state_bits[ i ];
 
-				for (j = 0; j < 3; j++) {
-					def.face_culling = j; // cullType_t value
+			for ( j = 0; j < 3; j++ ) {
+				def.face_culling = j; // cullType_t value
 
-					for (k = 0; k < 2; k++) {
-						def.polygon_offset = polygon_offset[k];
+				for ( k = 0; k < 2; k++ ) {
+					def.polygon_offset = polygon_offset[ k ];
 #ifdef USE_FOG_ONLY
-						def.shader_type = TYPE_FOG_ONLY;
+					def.shader_type = TYPE_FOG_ONLY;
 #else
-						def.shader_type = TYPE_SIGNLE_TEXTURE;
+					def.shader_type = TYPE_SIGNLE_TEXTURE;
 #endif
-						def.state_bits = fog_state;
-						vk.fog_pipelines[i][j][k] = vk_find_pipeline_ext( 0, &def, qtrue );
+					def.state_bits = fog_state;
+					vk.fog_pipelines[ i ][ j ][ k ] = vk_find_pipeline_ext( 0, &def, qtrue );
 
-						def.shader_type = TYPE_SIGNLE_TEXTURE;
-						def.state_bits = dlight_state;
+					def.shader_type = TYPE_SIGNLE_TEXTURE;
+					def.state_bits = dlight_state;
 #ifdef USE_LEGACY_DLIGHTS
 #ifdef USE_PMLIGHT
-						vk.dlight_pipelines[i][j][k] = vk_find_pipeline_ext( 0, &def, r_dlightMode->integer == 0 ? qtrue : qfalse );
+					vk.dlight_pipelines[ i ][ j ][ k ] = vk_find_pipeline_ext( 0, &def, r_dlightMode->integer == 0 ? qtrue : qfalse );
 #else
-						vk.dlight_pipelines[i][j][k] = vk_find_pipeline_ext( 0, &def, qtrue );
+					vk.dlight_pipelines[ i ][ j ][ k ] = vk_find_pipeline_ext( 0, &def, qtrue );
 #endif
 #endif
-					}
 				}
 			}
+		}
 
 #ifdef USE_PMLIGHT
-			def.state_bits = GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL;
-			//def.shader_type = TYPE_SIGNLE_TEXTURE_LIGHTING;
-			for (i = 0; i < 3; i++) { // cullType
-				def.face_culling = i;
-				for ( j = 0; j < 2; j++ ) { // polygonOffset
-					def.polygon_offset = polygon_offset[j];
-					for ( k = 0; k < 2; k++ ) {
-						def.fog_stage = k; // fogStage
-						for ( l = 0; l < 2; l++ ) {
-							def.abs_light = l;
-							def.shader_type = TYPE_SIGNLE_TEXTURE_LIGHTING;
-							vk.dlight_pipelines_x[i][j][k][l] = vk_find_pipeline_ext( 0, &def, qfalse );
-							def.shader_type = TYPE_SIGNLE_TEXTURE_LIGHTING_LINEAR;
-							vk.dlight1_pipelines_x[i][j][k][l] = vk_find_pipeline_ext( 0, &def, qfalse );
-						}
+		def.state_bits = GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL;
+		//def.shader_type = TYPE_SIGNLE_TEXTURE_LIGHTING;
+		for (i = 0; i < 3; i++) { // cullType
+			def.face_culling = i;
+			for ( j = 0; j < 2; j++ ) { // polygonOffset
+				def.polygon_offset = polygon_offset[j];
+				for ( k = 0; k < 2; k++ ) {
+					def.fog_stage = k; // fogStage
+					for ( l = 0; l < 2; l++ ) {
+						def.abs_light = l;
+						def.shader_type = TYPE_SIGNLE_TEXTURE_LIGHTING;
+						vk.dlight_pipelines_x[i][j][k][l] = vk_find_pipeline_ext( 0, &def, qfalse );
+						def.shader_type = TYPE_SIGNLE_TEXTURE_LIGHTING_LINEAR;
+						vk.dlight1_pipelines_x[i][j][k][l] = vk_find_pipeline_ext( 0, &def, qfalse );
 					}
 				}
 			}
+		}
 #endif // USE_PMLIGHT
-		}
+	}
 
-		{
-			Vk_Pipeline_Def def;
+	// RT_BEAM surface
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE;
+		def.face_culling = CT_FRONT_SIDED;
+		def.primitives = TRIANGLE_STRIP;
+		vk.surface_beam_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
 
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE;
-			def.face_culling = CT_FRONT_SIDED;
-			def.primitives = TRIANGLE_STRIP;
+	// axis for missing models
+	{
+		Com_Memset( &def, 0, sizeof( def ) );
+		def.state_bits = GLS_DEFAULT;
+		def.shader_type = TYPE_SIGNLE_TEXTURE;
+		def.face_culling = CT_TWO_SIDED;
+		def.primitives = LINE_LIST;
+		if ( vk.wideLines )
+			def.line_width = 3;
+		vk.surface_axis_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
 
-			vk.surface_beam_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
+	// flare visibility test dot
+	{
+		Com_Memset( &def, 0, sizeof( def ) );
+		//def.state_bits = GLS_DEFAULT;
+		def.face_culling = CT_TWO_SIDED;
+		def.shader_type = TYPE_DOT;
+		def.primitives = POINT_LIST;
+		vk.dot_pipeline = vk_find_pipeline_ext( 0, &def, qtrue );
+	}
 
-		{
-			Vk_Pipeline_Def def;
+	// DrawTris()
+	state_bits = GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE;
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = state_bits;
+		def.shader_type = TYPE_COLOR_WHITE;
+		def.face_culling = CT_FRONT_SIDED;
+		vk.tris_debug_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = state_bits;
+		def.shader_type = TYPE_COLOR_WHITE;
+		def.face_culling = CT_BACK_SIDED;
+		vk.tris_mirror_debug_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = state_bits;
+		def.shader_type = TYPE_COLOR_GREEN;
+		def.face_culling = CT_FRONT_SIDED;
+		vk.tris_debug_green_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = state_bits;
+		def.shader_type = TYPE_COLOR_GREEN;
+		def.face_culling = CT_BACK_SIDED;
+		vk.tris_mirror_debug_green_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = state_bits;
+		def.shader_type = TYPE_COLOR_RED;
+		def.face_culling = CT_FRONT_SIDED;
+		vk.tris_debug_red_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = state_bits;
+		def.shader_type = TYPE_COLOR_RED;
+		def.face_culling = CT_BACK_SIDED;
+		vk.tris_mirror_debug_red_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
 
-			Com_Memset( &def, 0, sizeof( def ) );
-			def.state_bits = GLS_DEFAULT;
-			def.face_culling = CT_TWO_SIDED;
-			def.primitives = LINE_LIST;
-			if ( vk.wideLines )
-				def.line_width = 3;
+	// DrawNormals()
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = GLS_DEPTHMASK_TRUE;
+		def.shader_type = TYPE_SIGNLE_TEXTURE;
+		def.primitives = LINE_LIST;
+		vk.normals_debug_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
 
-			vk.surface_axis_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
+	// RB_DebugPolygon()
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE;
+		def.shader_type = TYPE_SIGNLE_TEXTURE;
+		vk.surface_debug_pipeline_solid = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE;
+		def.shader_type = TYPE_SIGNLE_TEXTURE;
+		def.primitives = LINE_LIST;
+		vk.surface_debug_pipeline_outline = vk_find_pipeline_ext( 0, &def, qfalse );
+	}
 
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset( &def, 0, sizeof( def ) );
-			//def.state_bits = GLS_DEFAULT;
-			def.face_culling = CT_TWO_SIDED;
-			def.shader_type = TYPE_DOT;
-			def.primitives = POINT_LIST;
-			vk.dot_pipeline = vk_find_pipeline_ext( 0, &def, qtrue );
-		}
-
-		// debug pipelines
-		state_bits = GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE;
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = state_bits;
-			def.shader_type = TYPE_COLOR_WHITE;
-			def.face_culling = CT_FRONT_SIDED;
-			vk.tris_debug_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = state_bits;
-			def.shader_type = TYPE_COLOR_WHITE;
-			def.face_culling = CT_BACK_SIDED;
-			vk.tris_mirror_debug_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = state_bits;
-			def.shader_type = TYPE_COLOR_GREEN;
-			def.face_culling = CT_FRONT_SIDED;
-			vk.tris_debug_green_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = state_bits;
-			def.shader_type = TYPE_COLOR_GREEN;
-			def.face_culling = CT_BACK_SIDED;
-			vk.tris_mirror_debug_green_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = state_bits;
-			def.shader_type = TYPE_COLOR_RED;
-			def.face_culling = CT_FRONT_SIDED;
-			vk.tris_debug_red_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = state_bits;
-			def.shader_type = TYPE_COLOR_RED;
-			def.face_culling = CT_BACK_SIDED;
-			vk.tris_mirror_debug_red_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = GLS_DEPTHMASK_TRUE;
-			def.primitives = LINE_LIST;
-
-			vk.normals_debug_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE;
-
-			vk.surface_debug_pipeline_solid = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE;
-			def.primitives = LINE_LIST;
-			vk.surface_debug_pipeline_outline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
-		{
-			Vk_Pipeline_Def def;
-
-			Com_Memset(&def, 0, sizeof(def));
-			def.state_bits = GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
-			def.primitives = TRIANGLE_STRIP;
-
-			vk.images_debug_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
-		}
+	// RB_ShowImages
+	{
+		Com_Memset(&def, 0, sizeof(def));
+		def.state_bits = GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
+		def.shader_type = TYPE_SIGNLE_TEXTURE;
+		def.primitives = TRIANGLE_STRIP;
+		vk.images_debug_pipeline = vk_find_pipeline_ext( 0, &def, qfalse );
 	}
 }
 
@@ -3222,10 +3228,12 @@ static void vk_create_framebuffers( void )
 
 			// bloom color extraction
 			desc.renderPass = vk.render_pass.bloom_extract;
-			desc.attachmentCount = 1;
-			attachments[0] = vk.bloom_image_view[0];
 			desc.width = width;
 			desc.height = height;
+
+			desc.attachmentCount = 1;
+			attachments[0] = vk.bloom_image_view[0];
+
 			VK_CHECK( qvkCreateFramebuffer( vk.device, &desc, NULL, &vk.framebuffers.bloom_extract ) );
 
 			SET_OBJECT_NAME( vk.framebuffers.bloom_extract, "framebuffer - bloom extraction", VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT );
@@ -3235,10 +3243,10 @@ static void vk_create_framebuffers( void )
 				width /= 2;
 				height /= 2;
 
+				desc.renderPass = vk.render_pass.blur[n];
 				desc.width = width;
 				desc.height = height;
 
-				desc.renderPass = vk.render_pass.blur[n];
 				desc.attachmentCount = 1;
 
 				attachments[0] = vk.bloom_image_view[n+0+1];
@@ -3264,17 +3272,15 @@ static void vk_create_sync_primitives( void ) {
 	desc.pNext = NULL;
 	desc.flags = 0;
 
-	// swapchain image acquired
-	VK_CHECK( qvkCreateSemaphore( vk.device, &desc, NULL, &vk.image_acquired ) );
-
-	SET_OBJECT_NAME( vk.image_acquired, "image_acquired semaphore", VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT );
-
 	// all commands submitted
 	for ( i = 0; i < NUM_COMMAND_BUFFERS; i++ )
 	{
 		desc.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		desc.pNext = NULL;
 		desc.flags = 0;
+
+		// swapchain image acquired
+		VK_CHECK( qvkCreateSemaphore( vk.device, &desc, NULL, &vk.tess[ i ].image_acquired ) );
 
 		VK_CHECK( qvkCreateSemaphore( vk.device, &desc, NULL, &vk.tess[i].rendering_finished ) );
 
@@ -3285,6 +3291,7 @@ static void vk_create_sync_primitives( void ) {
 		VK_CHECK( qvkCreateFence( vk.device, &fence_desc, NULL, &vk.tess[i].rendering_finished_fence ) );
 		vk.tess[i].waitForFence = qtrue;
 
+		SET_OBJECT_NAME( vk.tess[i].image_acquired, va( "image_acquired semaphore %i", i ), VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT);
 		SET_OBJECT_NAME( vk.tess[i].rendering_finished, va( "rendering_finished semaphore %i", i ), VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT );
 		SET_OBJECT_NAME( vk.tess[i].rendering_finished_fence, va( "rendering_finished fence %i", i ), VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT );
 	}
@@ -3294,9 +3301,8 @@ static void vk_create_sync_primitives( void ) {
 static void vk_destroy_sync_primitives( void  ) {
 	uint32_t i;
 
-	qvkDestroySemaphore( vk.device, vk.image_acquired, NULL );
-
 	for ( i = 0; i < NUM_COMMAND_BUFFERS; i++ ) {
+		qvkDestroySemaphore( vk.device, vk.tess[i].image_acquired, NULL );
 		qvkDestroySemaphore( vk.device, vk.tess[i].rendering_finished, NULL );
 		qvkDestroyFence( vk.device, vk.tess[i].rendering_finished_fence, NULL );
 		vk.tess[i].waitForFence = qfalse;
@@ -3383,7 +3389,6 @@ static void vk_restart_swapchain( const char *funcname )
 	setup_surface_formats( vk.physical_device );
 
 	vk_create_sync_primitives();
-	//vk.initSwapchainLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	vk_create_swapchain( vk.physical_device, vk.device, vk.surface, vk.present_format, &vk.swapchain );
 	vk_create_attachments();
 	vk_create_render_passes();
@@ -3777,6 +3782,7 @@ void vk_initialize( void )
 	vk.active = qtrue;
 }
 
+
 void vk_create_pipelines( void )
 {
 	vk_alloc_persistent_pipelines();
@@ -3907,6 +3913,7 @@ static void vk_destroy_pipelines( qboolean reset )
 			if ( vk.pipelines[i].handle[j] != VK_NULL_HANDLE ) {
 				qvkDestroyPipeline( vk.device, vk.pipelines[i].handle[j], NULL );
 				vk.pipelines[i].handle[j] = VK_NULL_HANDLE;
+				vk.pipeline_create_count--;
 			}
 		}
 	}
@@ -4096,6 +4103,7 @@ void vk_release_resources( void ) {
 			if ( vk.pipelines[i].handle[j] != VK_NULL_HANDLE ) {
 				qvkDestroyPipeline( vk.device, vk.pipelines[i].handle[j], NULL );
 				vk.pipelines[i].handle[j] = VK_NULL_HANDLE;
+				vk.pipeline_create_count--;
 			}
 		}
 		Com_Memset( &vk.pipelines[i], 0, sizeof( vk.pipelines[0] ) );
@@ -4797,7 +4805,7 @@ static void push_attr( uint32_t location, uint32_t binding, VkFormat format )
 }
 
 
-VkPipeline create_pipeline( const Vk_Pipeline_Def *def, uint32_t renderPassIndex ) {
+VkPipeline create_pipeline( const Vk_Pipeline_Def *def, renderPass_t renderPassIndex ) {
 	VkShaderModule *vs_module = NULL;
 	VkShaderModule *fs_module = NULL;
 	int32_t vert_spec_data[1]; // clippping
@@ -6405,9 +6413,12 @@ void vk_begin_frame( void )
 		return;
 
 	if ( vk.cmd->waitForFence ) {
+
+		vk.cmd = &vk.tess[ vk.cmd_index++ ];
+		vk.cmd_index %= NUM_COMMAND_BUFFERS;
+
 		if ( !ri.CL_IsMinimized() ) {
-			//res = qvkAcquireNextImageKHR( vk.device, vk.swapchain, UINT64_MAX, vk.image_acquired, VK_NULL_HANDLE, &vk.swapchain_image_index );
-			res = qvkAcquireNextImageKHR( vk.device, vk.swapchain, 2000000000, vk.image_acquired, VK_NULL_HANDLE, &vk.swapchain_image_index );
+			res = qvkAcquireNextImageKHR( vk.device, vk.swapchain, 5 * 1000000000LLU, vk.cmd->image_acquired, VK_NULL_HANDLE, &vk.swapchain_image_index );
 			// when running via RDP: "Application has already acquired the maximum number of images (0x2)"
 			// probably caused by "device lost" errors
 			if ( res < 0 ) {
@@ -6423,9 +6434,8 @@ void vk_begin_frame( void )
 			vk.swapchain_image_index %= vk.swapchain_image_count;
 		}
 
-		// TODO: do not switch with r_swapInterval?
-		vk.cmd = &vk.tess[ vk.cmd_index++ ];
-		vk.cmd_index %= NUM_COMMAND_BUFFERS;
+		//vk.cmd = &vk.tess[ vk.cmd_index++ ];
+		//vk.cmd_index %= NUM_COMMAND_BUFFERS;
 
 		vk.cmd->waitForFence = qfalse;
 		VK_CHECK( qvkWaitForFences( vk.device, 1, &vk.cmd->rendering_finished_fence, VK_FALSE, 1e10 ) );
@@ -6446,13 +6456,19 @@ void vk_begin_frame( void )
 	// Ensure visibility of geometry buffers writes.
 	//record_buffer_memory_barrier( vk.cmd->command_buffer, vk.cmd->vertex_buffer, vk.cmd->vertex_buffer_offset, VK_PIPELINE_STAGE_HOST_BIT, VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_ACCESS_HOST_WRITE_BIT, VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT );
 
-#if 0
-	//frameBuffer = vk.framebuffers[ vk.swapchain_image_index ];
+#if 1
+	// add explicit layout transition dependency
 	if ( vk.fboActive ) {
 		record_image_layout_transition( vk.cmd->command_buffer,
 			vk.color_image, VK_IMAGE_ASPECT_COLOR_BIT,
-			VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_UNDEFINED, //VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL );
+			VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
+
+	} else {
+		record_image_layout_transition( vk.cmd->command_buffer,
+			vk.swapchain_images[ vk.swapchain_image_index ], VK_IMAGE_ASPECT_COLOR_BIT,
+			VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_ACCESS_MEMORY_READ_BIT, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR );
 	}
 #endif
 
@@ -6590,7 +6606,7 @@ void vk_end_frame( void )
 	submit_info.pCommandBuffers = &vk.cmd->command_buffer;
 	if ( !ri.CL_IsMinimized() ) {
 		submit_info.waitSemaphoreCount = 1;
-		submit_info.pWaitSemaphores = &vk.image_acquired;
+		submit_info.pWaitSemaphores = &vk.cmd->image_acquired;
 		submit_info.pWaitDstStageMask = &wait_dst_stage_mask;
 		submit_info.signalSemaphoreCount = 1;
 		submit_info.pSignalSemaphores = &vk.cmd->rendering_finished;
@@ -6748,7 +6764,7 @@ void vk_read_pixels( byte *buffer, uint32_t width, uint32_t height )
 
 	command_buffer = begin_command_buffer();
 
-	if ( srcImage == vk.color_image ) {
+	if ( srcImageLayout != VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL ) {
 		record_image_layout_transition( command_buffer, srcImage,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			srcImageAccess, srcImageLayout,

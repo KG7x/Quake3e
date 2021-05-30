@@ -18,6 +18,7 @@
 #define NUM_COMMAND_BUFFERS 2	// number of command buffers / render semaphores / framebuffer sets
 
 #define USE_REVERSED_DEPTH
+//#define USE_BUFFER_CLEAR
 
 #define VK_NUM_BLOOM_PASSES 4
 
@@ -122,12 +123,12 @@ typedef struct {
 	qboolean noAnisotropy;
 } Vk_Sampler_Def;
 
-enum {
+typedef enum {
 	RENDER_PASS_SCREENMAP = 0,
 	RENDER_PASS_MAIN,
 	RENDER_PASS_POST_BLOOM,
 	RENDER_PASS_COUNT
-};
+} renderPass_t;
 
 typedef struct {
 	Vk_Shader_Type shader_type;
@@ -256,6 +257,7 @@ qboolean vk_surface_format_color_depth( VkFormat format, int* r, int* g, int* b 
 typedef struct vk_tess_s {
 	VkCommandBuffer command_buffer;
 
+	VkSemaphore image_acquired;
 	VkSemaphore rendering_finished;
 	VkFence rendering_finished_fence;
 	qboolean waitForFence;
@@ -307,7 +309,6 @@ typedef struct {
 	uint32_t swapchain_image_index;
 
 	VkCommandPool command_pool;
-	VkSemaphore image_acquired;
 
 	VkDeviceMemory image_memory[ MAX_ATTACHMENTS_IN_POOL ];
 	uint32_t image_memory_count;
@@ -539,7 +540,7 @@ typedef struct {
 	float renderScaleX;
 	float renderScaleY;
 
-	int		renderPassIndex;
+	renderPass_t renderPassIndex;
 
 	uint32_t screenMapWidth;
 	uint32_t screenMapHeight;
