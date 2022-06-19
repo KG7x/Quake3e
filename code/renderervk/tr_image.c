@@ -1224,7 +1224,7 @@ static const int numImageLoaders = ARRAY_LEN( imageLoaders );
 =================
 R_LoadImage
 
-Loads any of the supported image types into a cannonical
+Loads any of the supported image types into a canonical
 32 bit format.
 =================
 */
@@ -1700,12 +1700,6 @@ void R_SetColorMappings( void ) {
 	// setup the overbright lighting
 	// negative value will force gamma in windowed mode
 	tr.overbrightBits = abs( r_overBrightBits->integer );
-#ifdef USE_VULKAN
-	if ( !glConfig.deviceSupportsGamma && !vk.fboActive )
-#else
-	if ( !glConfig.deviceSupportsGamma )
-#endif
-		tr.overbrightBits = 0;		// need hardware gamma for overbright
 
 	// never overbright in windowed mode
 #ifdef USE_VULKAN
@@ -1716,7 +1710,16 @@ void R_SetColorMappings( void ) {
 		tr.overbrightBits = 0;
 		applyGamma = qfalse;
 	} else {
-		applyGamma = qtrue;
+#ifdef USE_VULKAN
+		if ( !glConfig.deviceSupportsGamma && !vk.fboActive ) {
+#else
+		if ( !glConfig.deviceSupportsGamma ) {
+#endif
+			tr.overbrightBits = 0; // need hardware gamma for overbright
+			applyGamma = qfalse;
+		} else {
+			applyGamma = qtrue;
+		}
 	}
 
 	// allow 2 overbright bits in 24 bit, but only 1 in 16 bit
@@ -1871,7 +1874,7 @@ SKINS
 CommaParse
 
 This is unfortunate, but the skin files aren't
-compatable with our normal parsing rules.
+compatible with our normal parsing rules.
 ==================
 */
 static char *CommaParse( const char **data_p ) {
