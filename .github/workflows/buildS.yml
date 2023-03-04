@@ -1,0 +1,131 @@
+name: build
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '*.txt'
+      - '.gitignore'
+      - 'docs/*'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+      - '*.txt'
+      - '.gitignore'
+      - 'docs/*'
+  release:
+    types: [published]
+
+  workflow_dispatch:
+
+jobs:
+  windows-msys:
+    name: ${{ matrix.btype }} Windows-GCC ${{ matrix.arch }}
+    runs-on: windows-2019
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86, x86_64]
+        cc: [gcc]
+        btype: [Release, Debug]
+        include:
+          - arch: x86
+            msystem: MINGW32
+            prefix: mingw-w64-i686
+
+          - arch: x86_64
+            msystem: MINGW64
+            prefix: mingw-w64-x86_64
+
+          - btype: Release
+            rule: install
+
+          - btype: Debug
+            rule: debug install
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+
+    - uses: msys2/setup-msys2@v2
+      with:
+        install: ${{ matrix.prefix }}-binutils ${{ matrix.prefix }}-make ${{ matrix.prefix }}-${{ matrix.cc }}
+        msystem: ${{ matrix.msystem }}
+        path-type: minimal
+        release: false
+        update: false
+
+    - uses: actions/checkout@v3.1.0
+      with:
+        submodules: recursive
+
+    - name: Build
+      if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
+      run: |
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 BUILD_CLIENT=0 BUILD_SERVER=1
+
+    - uses: actions/upload-artifact@v3.1.1
+      if: matrix.cc == 'gcc' && matrix.btype == 'release'
+      with:
+        name: windows-mingw-${{ matrix.arch }}
+        path: bin
+        if-no-files-found: error
+        retention-days: 5
+
+        
+  ubuntu-x86:
+    name: ${{ matrix.btype }} Ubuntu ${{ matrix.arch }}
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86, x86_64]
+        cc: [gcc]
+        btype: [Release, Debug]
+        include:
+          - btype: Release
+            rule: install
+
+          - btype: Debug
+            if: ${{ github.event_name != 'release' }}
+            rule: debug install
+
+          - arch: x86
+            use_sdl: USE_SDL=0
+
+          - arch: x86_64
+            use_sdl: USE_SDL=1
+
+    steps:
+
+    - name: Install tools
+      run: |
+        if [ ${{ matrix.arch }} == "x86" ]; then
+          sudo dpkg --add-architecture i386
+          sudo apt-get -qq update
+          sudo apt-get -y install gcc-multilib libcurl4-openssl-dev:i386 mesa-common-dev:i386 libxxf86dga-dev:i386 libxrandr-dev:i386 libxxf86vm-dev:i386 libasound-dev:i386
+        else
+          sudo apt-get -qq update
+          sudo apt-get -y install libcurl4-openssl-dev mesa-common-dev libxxf86dga-dev libxrandr-dev libxxf86vm-dev libasound-dev libsdl2-dev
+        fi
+
+    - uses: actions/checkout@v3.1.0
+      with:
+        submodules: recursive
+
+    - name: Build
+      if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip in Release builds
+      run: |
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 BUILD_CLIENT=0 BUILD_SERVER=1
+
+    - uses: actions/upload-artifact@v3.1.1
+      if: matrix.cc == 'gcc' && matrix.btype == 'release'
+      with:
+        name: linux-${{ matrix.arch }}
+        path: bin
+        if-no-files-found: error
+        retention-days: 5
