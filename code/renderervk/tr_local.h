@@ -1196,6 +1196,7 @@ typedef struct {
 	int						numLightmaps;
 	image_t					**lightmaps;
 
+	qboolean				mergeLightmaps;
 	float					lightmapOffset[2];	// current shader lightmap offset
 	float					lightmapScale[2];	// for lightmap atlases
 	int						lightmapMod;		// for lightmap atlases
@@ -1953,8 +1954,6 @@ void RB_ExecuteRenderCommands( const void *data );
 void RB_TakeScreenshot( int x, int y, int width, int height, const char *fileName );
 void RB_TakeScreenshotJPEG( int x, int y, int width, int height, const char *fileName );
 void RB_TakeScreenshotBMP( int x, int y, int width, int height, const char *fileName, int clipboard );
-
-void R_IssuePendingRenderCommands( void );
 
 void R_AddDrawSurfCmd( drawSurf_t *drawSurfs, int numDrawSurfs );
 
