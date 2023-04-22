@@ -160,6 +160,3 @@ void WIN_DisableAltTab( void );
 void WIN_EnableAltTab( void );
 
 void WIN_Minimize( void );
-
-void GLW_HideFullscreenWindow( void );
-void GLW_RestoreGamma( void );

@@ -997,18 +997,6 @@ void HandleEvents( void ) {
 
 /*
 ================
-GLW_HideFullscreenWindow
-================
-*/
-void GLW_HideFullscreenWindow( void ) {
-	if ( g_wv.hWnd && glw_state.cdsFullscreen ) {
-		ShowWindow( g_wv.hWnd, SW_HIDE );
-	}
-}
-
-
-/*
-================
 Sys_GetClipboardData
 ================
 */

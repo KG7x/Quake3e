@@ -109,6 +109,21 @@ static void R_IssueRenderCommands( void ) {
 
 
 /*
+====================
+R_IssuePendingRenderCommands
+
+Issue any pending commands and wait for them to complete.
+====================
+*/
+void R_IssuePendingRenderCommands( void ) {
+	if ( !tr.registered ) {
+		return;
+	}
+	R_IssueRenderCommands();
+}
+
+
+/*
 ============
 R_GetCommandBufferReserved
 

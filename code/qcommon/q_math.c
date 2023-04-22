@@ -1124,8 +1124,7 @@ Q_log2f
 */
 float Q_log2f( float f )
 {
-	const float v = logf( f );
-	return v / M_LN2;
+	return logf( f ) / M_LN2;
 }
 
 

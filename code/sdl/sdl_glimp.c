@@ -793,18 +793,6 @@ void VKimp_Shutdown( qboolean unloadDLL )
 
 
 /*
-================
-GLW_HideFullscreenWindow
-================
-*/
-void GLW_HideFullscreenWindow( void ) {
-	if ( SDL_window && glw_state.isFullscreen ) {
-		SDL_HideWindow( SDL_window );
-	}
-}
-
-
-/*
 ===============
 Sys_GetClipboardData
 ===============

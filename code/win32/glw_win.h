@@ -62,4 +62,8 @@ typedef struct
 
 extern glwstate_t glw_state;
 
+void GLW_RestoreGamma( void );
+
+void HandleEvents( void );
+
 #endif

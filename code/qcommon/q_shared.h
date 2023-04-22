@@ -381,7 +381,7 @@ typedef	int	fixed16_t;
 #endif
 
 #ifndef M_LN2
-#define M_LN2      0.693147180559945309417f
+#define M_LN2      0.693147180559945309417
 #endif
 
 #ifdef __linux__
