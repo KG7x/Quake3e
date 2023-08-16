@@ -1557,9 +1557,9 @@ static void R_Register( void )
 	//
 	r_lodCurveError = ri.Cvar_Get( "r_lodCurveError", "250", CVAR_ARCHIVE_ND );
 	ri.Cvar_CheckRange( r_lodCurveError, "-1", "8192", CV_FLOAT );
-	ri.Cvar_SetDescription( r_lodCurveError, "Level of detail error on curved surface grids." );
+	ri.Cvar_SetDescription( r_lodCurveError, "Level of detail error on curved surface grids. Higher values result in better quality at a distance." );
 	r_lodbias = ri.Cvar_Get( "r_lodbias", "0", CVAR_ARCHIVE_ND );
-	ri.Cvar_SetDescription( r_lodbias, "Sets the level of detail of in-game models:\n 0: High\n 1: Medium\n 2: Low" );
+	ri.Cvar_SetDescription( r_lodbias, "Sets the level of detail of in-game models:\n -2: Ultra (further delays LOD transition in the distance)\n -1: Very High (delays LOD transition in the distance)\n 0: High\n 1: Medium\n 2: Low" );
 	r_flares = ri.Cvar_Get ("r_flares", "0", CVAR_ARCHIVE_ND );
 	ri.Cvar_SetDescription( r_flares, "Enables corona effects on light sources." );
 	r_znear = ri.Cvar_Get( "r_znear", "4", CVAR_CHEAT );
@@ -1597,7 +1597,7 @@ static void R_Register( void )
 	ri.Cvar_CheckRange( r_dlightSaturation, "0", "1", CV_FLOAT );
 
 	r_dlightBacks = ri.Cvar_Get( "r_dlightBacks", "1", CVAR_ARCHIVE_ND );
-	ri.Cvar_SetDescription( r_dlightBacks, "Whether or not dynamic lights should light up back-face culled geometry." );
+	ri.Cvar_SetDescription( r_dlightBacks, "Whether or not dynamic lights should light up back-face culled geometry, affects only VQ3 dynamic lights." );
 	r_finish = ri.Cvar_Get( "r_finish", "0", CVAR_ARCHIVE_ND );
 	ri.Cvar_SetDescription( r_finish, "Force a glFinish call after rendering a scene." );
 	r_textureMode = ri.Cvar_Get( "r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE );

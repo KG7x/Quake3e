@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "resource.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <direct.h>
 #include <io.h>
 
@@ -67,7 +68,7 @@ Sys_Error
 Show the early console as an error dialog
 =============
 */
-void QDECL Sys_Error( const char *error, ... ) {
+void NORETURN FORMAT_PRINTF(1, 2) QDECL Sys_Error( const char *error, ... ) {
 	va_list	argptr;
 	char	text[4096];
 	MSG		msg;
@@ -109,7 +110,7 @@ void QDECL Sys_Error( const char *error, ... ) {
 Sys_Quit
 ==============
 */
-void Sys_Quit( void ) {
+void NORETURN Sys_Quit( void ) {
 
 	timeEndPeriod( 1 );
 
@@ -134,9 +135,17 @@ void Sys_Print( const char *msg )
 Sys_Mkdir
 ==============
 */
-void Sys_Mkdir( const char *path )
+qboolean Sys_Mkdir( const char *path )
 {
-	_mkdir( path );
+	if ( _mkdir( path ) == 0 ) {
+		return qtrue;
+	} else {
+		if ( errno == EEXIST ) {
+			return qtrue;
+		} else {
+			return qfalse;
+		}
+	}
 }
 
 
@@ -741,7 +750,7 @@ static LONG WINAPI ExceptionFilter( struct _EXCEPTION_POINTERS *ExceptionInfo )
 			}
 		}
 
-		if ( *basename ) {
+		if ( basename && *basename ) {
 			Com_sprintf( msg, sizeof( msg ), "Exception Code: %s\nException Address: %s@%x",
 				GetExceptionName( ExceptionInfo->ExceptionRecord->ExceptionCode ),
 				basename, (uint32_t)(addr - (byte*)hModule) );

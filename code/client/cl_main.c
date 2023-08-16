@@ -303,11 +303,12 @@ CL_WriteServerCommands
 static void CL_WriteServerCommands( msg_t *msg ) {
 	int i;
 
-	if ( clc.demoCommandSequence < clc.serverCommandSequence ) {
+	if ( clc.serverCommandSequence - clc.demoCommandSequence > 0 ) {
 
 		// do not write more than MAX_RELIABLE_COMMANDS
-		if ( clc.serverCommandSequence - clc.demoCommandSequence > MAX_RELIABLE_COMMANDS )
+		if ( clc.serverCommandSequence - clc.demoCommandSequence > MAX_RELIABLE_COMMANDS ) {
 			clc.demoCommandSequence = clc.serverCommandSequence - MAX_RELIABLE_COMMANDS;
+		}
 
 		for ( i = clc.demoCommandSequence + 1 ; i <= clc.serverCommandSequence; i++ ) {
 			MSG_WriteByte( msg, svc_serverCommand );
@@ -2986,8 +2987,6 @@ CL_Frame
 ==================
 */
 void CL_Frame( int msec, int realMsec ) {
-	float fps;
-	float frameDuration;
 
 #ifdef USE_CURL
 	if ( download.cURL ) {
@@ -3035,6 +3034,7 @@ void CL_Frame( int msec, int realMsec ) {
 	if ( CL_VideoRecording() && msec ) {
 		// save the current screen
 		if ( cls.state == CA_ACTIVE || cl_forceavidemo->integer ) {
+			float fps, frameDuration;
 
 			if ( com_timescale->value > 0.0001f )
 				fps = MIN( cl_aviFrameRate->value / com_timescale->value, 1000.0f );
@@ -3074,7 +3074,7 @@ void CL_Frame( int msec, int realMsec ) {
 			// Replace the ":" in the address as it is not a valid
 			// file name character
 			p = strchr( serverName, ':' );
-			if( p ) {
+			if ( p ) {
 				*p = '.';
 			}
 
@@ -3084,9 +3084,9 @@ void CL_Frame( int msec, int realMsec ) {
 			Cbuf_ExecuteText( EXEC_NOW,
 					va( "record %s-%s-%s", nowString, serverName, mapName ) );
 		}
-		else if( cls.state != CA_ACTIVE && clc.demorecording ) {
+		else if ( cls.state != CA_ACTIVE && clc.demorecording ) {
 			// Recording, but not CA_ACTIVE, so stop recording
-			CL_StopRecord_f( );
+			CL_StopRecord_f();
 		}
 	}
 
@@ -3136,7 +3136,7 @@ void CL_Frame( int msec, int realMsec ) {
 CL_RefPrintf
 ================
 */
-static __attribute__ ((format (printf, 2, 3))) void QDECL CL_RefPrintf( printParm_t level, const char *fmt, ... ) {
+static void FORMAT_PRINTF(2, 3) QDECL CL_RefPrintf( printParm_t level, const char *fmt, ... ) {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
 
