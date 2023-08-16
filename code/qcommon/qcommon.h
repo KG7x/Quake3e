@@ -101,8 +101,6 @@ int MSG_HashKey(const char *string, int maxlen);
 void	MSG_BeginReading (msg_t *sb);
 void	MSG_BeginReadingOOB(msg_t *sb);
 
-int		MSG_ReadBits( msg_t *msg, int bits );
-
 int		MSG_ReadChar (msg_t *sb);
 int		MSG_ReadByte (msg_t *sb);
 int		MSG_ReadShort (msg_t *sb);
@@ -111,8 +109,9 @@ float	MSG_ReadFloat (msg_t *sb);
 const char *MSG_ReadString (msg_t *sb);
 const char *MSG_ReadBigString (msg_t *sb);
 const char *MSG_ReadStringLine (msg_t *sb);
-float	MSG_ReadAngle16 (msg_t *sb);
-void	MSG_ReadData (msg_t *sb, void *buffer, int size);
+float MSG_ReadAngle16 (msg_t *sb);
+void  MSG_ReadData(msg_t *sb, void *buffer, int size);
+int   MSG_ReadEntitynum(msg_t *sb);
 
 void MSG_WriteDeltaUsercmdKey( msg_t *msg, int key, const usercmd_t *from, const usercmd_t *to );
 void MSG_ReadDeltaUsercmdKey( msg_t *msg, int key, const usercmd_t *from, usercmd_t *to );
@@ -1257,8 +1256,8 @@ void	Sys_SendKeyEvents( void );
 void	Sys_Sleep( int msec );
 char	*Sys_ConsoleInput( void );
 
-void	QDECL Sys_Error( const char *error, ...) __attribute__ ((noreturn, format (printf, 1, 2)));
-void	Sys_Quit (void) __attribute__ ((noreturn));
+void	NORETURN FORMAT_PRINTF(1, 2) QDECL Sys_Error( const char *error, ... );
+void	NORETURN Sys_Quit( void );
 char	*Sys_GetClipboardData( void );	// note that this isn't journaled...
 void	Sys_SetClipboardBitmap( const byte *bitmap, int length );
 
@@ -1268,7 +1267,8 @@ void	Sys_Print( const char *msg );
 void	QDECL Sys_SetStatus( const char *format, ...) __attribute__ ((format (printf, 1, 2)));
 
 #ifdef USE_AFFINITY_MASK
-void	Sys_SetAffinityMask( int mask );
+uint64_t Sys_GetAffinityMask( void );
+qboolean Sys_SetAffinityMask( const uint64_t mask );
 #endif
 
 // Sys_Milliseconds should only be used for profiling purposes,
@@ -1294,7 +1294,7 @@ qboolean	Sys_StringToAdr( const char *s, netadr_t *a, netadrtype_t family );
 qboolean	Sys_IsLANAddress(const netadr_t *adr);
 void		Sys_ShowIP(void);
 
-void	Sys_Mkdir( const char *path );
+qboolean	Sys_Mkdir( const char *path );
 FILE	*Sys_FOpen( const char *ospath, const char *mode );
 qboolean Sys_ResetReadOnlyAttribute( const char *ospath );
 
