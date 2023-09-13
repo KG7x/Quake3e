@@ -466,6 +466,8 @@ ifeq ($(COMPILE_PLATFORM),darwin)
 
   BASE_CFLAGS += -Wno-unused-result
 
+  BASE_CFLAGS += -DMACOS_X
+
   OPTIMIZE = -O2 -fvisibility=hidden
 
   SHLIBEXT = dylib
@@ -1103,6 +1105,11 @@ ifndef MINGW
     $(B)/client/snd_mix_mmx.o \
     $(B)/client/snd_mix_sse.o
 endif
+endif
+
+ifeq ($(ARCH),x86_64)
+  Q3OBJ += \
+    $(B)/client/snd_mix_x86_64.o
 endif
 
 ifeq ($(HAVE_VM_COMPILED),true)
