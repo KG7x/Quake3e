@@ -367,7 +367,7 @@ static void R_LoadMergedLightmaps( const lump_t *l, byte *image )
 				R_ProcessLightmap( image, buf + offs, maxIntensity );
 				
 #ifdef USE_VULKAN
-				vk_upload_image_data( tr.lightmaps[ i ], x * LIGHTMAP_LEN, y * LIGHTMAP_LEN, LIGHTMAP_LEN, LIGHTMAP_LEN, 1, image, LIGHTMAP_LEN * LIGHTMAP_LEN * 4 );
+				vk_upload_image_data( tr.lightmaps[ i ], x * LIGHTMAP_LEN, y * LIGHTMAP_LEN, LIGHTMAP_LEN, LIGHTMAP_LEN, 1, image, LIGHTMAP_LEN * LIGHTMAP_LEN * 4, qtrue );
 #else
 				R_UploadSubImage( image, x * LIGHTMAP_LEN, y * LIGHTMAP_LEN, LIGHTMAP_LEN, LIGHTMAP_LEN, tr.lightmaps[ i ] );
 #endif
@@ -396,7 +396,7 @@ R_LoadLightmaps
 static void R_LoadLightmaps( const lump_t *l ) {
 	const byte	*buf;
 	byte		image[LIGHTMAP_LEN*LIGHTMAP_LEN*4];
-	int			i;
+	int			i, numLightmaps;
 	float		maxIntensity = 0;
 
 	tr.numLightmaps = 0;
@@ -420,7 +420,9 @@ static void R_LoadLightmaps( const lump_t *l ) {
 		return;
 	}
 
-	if ( r_mergeLightmaps->integer ) {
+	numLightmaps = l->filelen / (LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3);
+
+	if ( r_mergeLightmaps->integer && numLightmaps > 1 ) {
 		// check for low texture sizes
 		if ( glConfig.maxTextureSize >= LIGHTMAP_LEN * 2 ) {
 			tr.mergeLightmaps = qtrue;
@@ -432,7 +434,7 @@ static void R_LoadLightmaps( const lump_t *l ) {
 	buf = fileBase + l->fileofs;
 
 	// create all the lightmaps
-	tr.numLightmaps = l->filelen / (LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3);
+	tr.numLightmaps = numLightmaps;
 
 	tr.lightmaps = ri.Hunk_Alloc( tr.numLightmaps * sizeof(image_t *), h_low );
 
@@ -537,6 +539,7 @@ static shader_t *ShaderForShaderNum( const int shaderNum, int lightmapNum ) {
 }
 
 
+#ifdef USE_PMLIGHT
 static void GenerateNormals( srfSurfaceFace_t *face )
 {
 	vec3_t ba, ca, cross;
@@ -573,6 +576,7 @@ static void GenerateNormals( srfSurfaceFace_t *face )
 		VectorNormalize2( n1, n1 );
 	}
 }
+#endif // USE_PMLIGHT
 
 
 /*
@@ -1934,6 +1938,20 @@ static	void R_LoadPlanes( const lump_t *l ) {
 
 /*
 =================
+R_PreLoadFogs
+=================
+*/
+static void R_PreLoadFogs( const lump_t *l ) {
+	if ( l->filelen % sizeof( dfog_t ) ) {
+		tr.numFogs = 0;
+	} else {
+		tr.numFogs = l->filelen / sizeof( dfog_t );
+	}
+}
+
+
+/*
+=================
 R_LoadFogs
 =================
 */
@@ -2294,6 +2312,7 @@ void RE_LoadWorldMap( const char *name ) {
 
 	// load into heap
 	R_LoadLightmaps( &header->lumps[LUMP_LIGHTMAPS] );
+	R_PreLoadFogs( &header->lumps[LUMP_FOGS] );
 	R_LoadShaders( &header->lumps[LUMP_SHADERS] );
 	R_LoadPlanes( &header->lumps[LUMP_PLANES] );
 	R_LoadFogs( &header->lumps[LUMP_FOGS], &header->lumps[LUMP_BRUSHES], &header->lumps[LUMP_BRUSHSIDES] );

@@ -1841,15 +1841,12 @@ Wrapper for CL_Vid_Restart
 */
 static void CL_Vid_Restart_f( void ) {
 
-	if ( Q_stricmp( Cmd_Argv(1), "keep_window" ) == 0 ) {
+	if ( Q_stricmp( Cmd_Argv( 1 ), "keep_window" ) == 0 || Q_stricmp( Cmd_Argv( 1 ), "fast" ) == 0 ) {
 		// fast path: keep window
 		CL_Vid_Restart( REF_KEEP_WINDOW );
-	} else if ( Q_stricmp(Cmd_Argv(1), "fast") == 0 ) {
-		// fast path: keep context
-		CL_Vid_Restart( REF_KEEP_CONTEXT );
 	} else {
 		if ( cls.lastVidRestart ) {
-			if ( abs( cls.lastVidRestart - Sys_Milliseconds()) < 500 ) {
+			if ( abs( cls.lastVidRestart - Sys_Milliseconds() ) < 500 ) {
 				// hack for OSP mod: do not allow vid restart right after cgame init
 				return;
 			}
@@ -3970,7 +3967,7 @@ void CL_Init( void ) {
 	Cvar_CheckRange( cl_dlDirectory, "0", "1", CV_INTEGER );
 	s = va( "Save downloads initiated by \\dlmap and \\download commands in:\n"
 		" 0 - current game directory\n"
-		" 1 - fs_basegame (%s) directory\n", FS_GetBaseGameDir() );
+		" 1 - basegame (%s) directory\n", FS_GetBaseGameDir() );
 	Cvar_SetDescription( cl_dlDirectory, s );
 
 	cl_reconnectArgs = Cvar_Get( "cl_reconnectArgs", "", CVAR_ARCHIVE_ND | CVAR_NOTABCOMPLETE );

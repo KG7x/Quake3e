@@ -1306,7 +1306,33 @@ void Q_strncpyz( char *dest, const char *src, int destsize )
 }
 
 
-int Q_stricmpn (const char *s1, const char *s2, int n) {
+/*
+=============
+Q_strncpy
+=============
+*/
+char *Q_strncpy( char *dest, const char *src, int destsize )
+{
+	char *start = dest;
+
+	while ( destsize > 0 && (*dest++ = *src++) != '\0' ) {
+		--destsize;
+	}
+
+	while ( --destsize > 0 ) {
+		*dest++ = '\0';
+	}
+
+	return start;
+}
+
+
+/*
+=============
+Q_stricmpn
+=============
+*/
+int Q_stricmpn( const char *s1, const char *s2, int n ) {
 	int		c1, c2;
 
 	// bk001129 - moved in 1.17 fix not in id codebase
@@ -1977,6 +2003,11 @@ int Info_RemoveKey( char *s, const char *key )
 		pkey = s;
 		while ( *s != '\\' ) {
 			if ( *s == '\0' ) {
+				if ( s != start ) {
+					// remove any trailing empty keys
+					*start = '\0';
+					ret += (int)(s - start);
+				}
 				return ret;
 			}
 			++s;

@@ -133,7 +133,9 @@ NET
 
 ==============================================================
 */
+#ifndef DISABLE_IPV6
 #define USE_IPV6
+#endif
 
 #define NET_ENABLEV4            0x01
 #define NET_ENABLEV6            0x02
@@ -849,9 +851,7 @@ void FS_VM_CloseFiles( handleOwner_t owner );
 const char *FS_GetCurrentGameDir( void );
 const char *FS_GetBaseGameDir( void );
 
-const char *FS_GetBasePath( void );
 const char *FS_GetHomePath( void );
-const char *FS_GetGamePath( void );
 
 qboolean FS_StripExt( char *filename, const char *ext );
 qboolean FS_AllowedExtension( const char *fileName, qboolean allowPk3s, const char **ext );
@@ -1302,6 +1302,10 @@ const char *Sys_Pwd( void );
 const char *Sys_DefaultBasePath( void );
 const char *Sys_DefaultHomePath( void );
 const char *Sys_SteamPath( void );
+
+#ifdef __APPLE__
+char    *Sys_DefaultAppPath( void );
+#endif
 
 char **Sys_ListFiles( const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs );
 void Sys_FreeFileList( char **list );
