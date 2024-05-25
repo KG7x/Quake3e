@@ -43,7 +43,7 @@ jobs:
             rule: install
 
           - btype: Debug
-            rule: debug install
+            rule: debug
 
     defaults:
       run:
@@ -154,7 +154,7 @@ jobs:
 
           - btype: Debug
             if: ${{ github.event_name != 'release' }}
-            rule: debug install
+            rule: debug
 
           - arch: x86
             use_sdl: USE_SDL=0
@@ -208,7 +208,7 @@ jobs:
             rule: install
 
           - btype: Debug
-            rule: debug install
+            rule: debug
 
     steps:
 
@@ -230,9 +230,9 @@ jobs:
           apt-get -qq update
           apt-get install -y make gcc g++
           apt-get -y install libcurl4-openssl-dev mesa-common-dev libxxf86dga-dev libxrandr-dev libxxf86vm-dev libasound-dev
-          make ${{ matrix.rule }} -j 4 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=vulkan CNAME=quake3e-vulkan BUILD_SERVER=0
+          make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=vulkan CNAME=quake3e-vulkan BUILD_SERVER=0
           make clean ARCH=${{ matrix.arch }} 
-          make ${{ matrix.rule }} -j 4 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl
+          make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl
 
     - uses: actions/upload-artifact@v4
       if: false
@@ -257,7 +257,7 @@ jobs:
             rule: install
 
           - btype: Debug
-            rule: debug install
+            rule: debug
 
     steps:
 
@@ -271,9 +271,9 @@ jobs:
     - name: Build
       if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
       run: |
-        make ${{ matrix.rule }} -j 4 CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=vulkan CNAME=quake3e-vulkan BUILD_SERVER=0 STRIP=echo
+        make ${{ matrix.rule }} -j 8 CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=vulkan CNAME=quake3e-vulkan BUILD_SERVER=0 STRIP=echo
         make clean ARCH=${{ matrix.arch }} 
-        make ${{ matrix.rule }} -j 4 CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl STRIP=echo
+        make ${{ matrix.rule }} -j 8 CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl STRIP=echo
 
     - uses: actions/upload-artifact@v4
       if: matrix.cc == 'clang' && matrix.btype == 'release'
