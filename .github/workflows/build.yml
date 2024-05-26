@@ -244,12 +244,12 @@ jobs:
         retention-days: 5
 
   macos-x86:
-    name: ${{ matrix.btype }} macOS x86_64
+    name: ${{ matrix.btype }} macOS ${{ matrix.arch }}
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86_64]
+        arch: [x86_64, aarch64]
         cc: [clang]
         btype: [Release, Debug]
         include:
