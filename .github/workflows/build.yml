@@ -245,7 +245,7 @@ jobs:
 
   macos-x86:
     name: ${{ matrix.btype }} macOS ${{ matrix.arch }}
-    runs-on: macos-14-large
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
@@ -259,6 +259,12 @@ jobs:
           - btype: Debug
             rule: debug
 
+          - arch: x86_64
+            use_lh: USE_LOCAL_HEADERS=1
+
+          - arch: aarch64
+            use_lh: USE_LOCAL_HEADERS=0
+
     steps:
 
     - name: Install tools
@@ -271,9 +277,9 @@ jobs:
     - name: Build
       if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
       run: |
-        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall USE_LOCAL_HEADERS=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=vulkan CNAME=quake3e-vulkan BUILD_SERVER=0 STRIP=echo
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall ${{ use_lh }} USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=vulkan CNAME=quake3e-vulkan BUILD_SERVER=0 STRIP=echo
         make clean ARCH=${{ matrix.arch }} 
-        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall USE_LOCAL_HEADERS=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl STRIP=echo
+        make ${{ matrix.rule }} -j 8 ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin INSTALL=ginstall ${{ use_lh }} USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl STRIP=echo
 
     - uses: actions/upload-artifact@v4
       if: matrix.cc == 'clang' && matrix.btype == 'release'
