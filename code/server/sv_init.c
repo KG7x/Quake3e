@@ -609,7 +609,7 @@ void SV_SpawnServer( const char *mapname, qboolean killBots ) {
 	// files with the latest cgame and ui qvm to pass the pure check
 	FS_TouchFileInPak( "vm/cgame.qvm" );
 	FS_TouchFileInPak( "vm/ui.qvm" );
-
+/*
 	// the server sends these to the clients so they can figure
 	// out which pk3s should be auto-downloaded
 	p = FS_ReferencedPakNames();
@@ -627,7 +627,7 @@ void SV_SpawnServer( const char *mapname, qboolean killBots ) {
 
 	Cvar_Set( "sv_paks", "" );
 	Cvar_Set( "sv_pakNames", "" ); // not used on client-side
-
+*/
 	if ( sv.pure != 0 ) {
 		int freespace, pakslen, infolen;
 		qboolean overflowed = qfalse;
