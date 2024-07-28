@@ -4740,6 +4740,7 @@ static void FS_Startup( void ) {
 
 	if (fs_include->string[0]) {
 		FS_AddGameDirectory( fs_basepath->string, fs_include->string );
+	}
 	
 	// add search path elements in reverse priority order
 	if (fs_steampath->string[0]) {
