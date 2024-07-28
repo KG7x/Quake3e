@@ -771,7 +771,7 @@ static void SVC_Status_Defrag( const netadr_t *from ) {
 	status[0] = '\0';
 	statusLength = strlen( infostring ) + 16; // strlen( "statusResponse\n\n" )
 
-	for ( i = 0 ; i < sv_maxclients->integer ; i++ ) {
+	for ( i = 0; i < sv.maxclients; i++ ) {
 		cl = &svs.clients[i];
 		if ( cl->state >= CS_CONNECTED ) {
 
