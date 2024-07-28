@@ -307,6 +307,7 @@ static	cvar_t		*fs_steampath;
 
 static	cvar_t		*fs_basepath;
 static	cvar_t		*fs_basegame;
+static	cvar_t		*fs_include;
 static	cvar_t		*fs_copyfiles;
 static	cvar_t		*fs_gamedirvar;
 #ifndef USE_HANDLE_CACHE
@@ -4681,6 +4682,7 @@ static void FS_Startup( void ) {
 	fs_basegame = Cvar_Get( "fs_basegame", BASEGAME, CVAR_INIT | CVAR_PROTECTED );
 	Cvar_SetDescription( fs_basegame, "Write-protected CVAR specifying the path to the base game(s) folder(s), separated by '/'." );
 	fs_steampath = Cvar_Get( "fs_steampath", Sys_SteamPath(), CVAR_INIT | CVAR_PROTECTED | CVAR_PRIVATE );
+	fs_include = Cvar_Get( "fs_include", "", CVAR_INIT );
 
 	/* parse fs_basegame cvar */
 	if ( basegame_cnt == 0 || Q_stricmp( basegame, fs_basegame->string ) ) {
@@ -4736,6 +4738,9 @@ static void FS_Startup( void ) {
 #endif
 #endif
 
+	if (fs_include->string[0]) {
+		FS_AddGameDirectory( fs_basepath->string, fs_include->string );
+	
 	// add search path elements in reverse priority order
 	if (fs_steampath->string[0]) {
 		// handle multiple basegames:
