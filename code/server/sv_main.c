@@ -718,6 +718,82 @@ static void SVC_Status( const netadr_t *from ) {
 
 /*
 ================
+SVC_Status_Defrag
+Responds with detailed server info: CS_SERVERINFO and the scoreboard.
+================
+*/
+static void SVC_Status_Defrag( const netadr_t *from ) {
+	char	player[MAX_NAME_LENGTH + 32]; // score + ping + name
+	char	status[MAX_PACKETLEN];
+	char	*s;
+	int		i;
+	client_t	*cl;
+	playerState_t	*ps;
+	int		statusLength;
+	int		playerLength;
+	char	infostring[MAX_INFO_STRING+160]; // add some space for challenge string
+	const char *dfscore;
+
+	// ignore if we are in single player
+#ifndef DEDICATED
+	if ( Cvar_VariableIntegerValue( "g_gametype" ) == GT_SINGLE_PLAYER || Cvar_VariableIntegerValue("ui_singlePlayerActive")) {
+		return;
+	}
+#endif
+
+	// Prevent using getstatus as an amplifier
+	if ( SVC_RateLimitAddress( from, 10, 1000 ) ) {
+		if ( com_developer->integer ) {
+			Com_Printf( "SVC_Status: rate limit from %s exceeded, dropping request\n",
+				NET_AdrToString( from ) );
+		}
+		return;
+	}
+
+	// Allow getstatus to be DoSed relatively easily, but prevent
+	// excess outbound bandwidth usage when being flooded inbound
+	if ( SVC_RateLimit( &outboundRateLimit, 10, 100 ) ) {
+		Com_DPrintf( "SVC_Status: rate limit exceeded, dropping request\n" );
+		return;
+	}
+
+	// A maximum challenge length of 128 should be more than plenty.
+	if ( strlen( Cmd_Argv( 1 ) ) > 128 )
+		return;
+
+	Q_strncpyz( infostring, Cvar_InfoString( CVAR_SERVERINFO, NULL ), sizeof( infostring ) );
+
+	// echo back the parameter to status. so master servers can use it as a challenge
+	// to prevent timed spoofed reply packets that add ghost servers
+	Info_SetValueForKey( infostring, "challenge", Cmd_Argv( 1 ) );
+
+	s = status;
+	status[0] = '\0';
+	statusLength = strlen( infostring ) + 16; // strlen( "statusResponse\n\n" )
+
+	for ( i = 0 ; i < sv_maxclients->integer ; i++ ) {
+		cl = &svs.clients[i];
+		if ( cl->state >= CS_CONNECTED ) {
+
+			ps = SV_GameClientNum( i );
+			dfscore = Info_ValueForKey(sv.configstrings[CS_PLAYERS+i], "dfscore");
+			playerLength = Com_sprintf( player, sizeof( player ), "%i %i \"%s\" \"%s\"\n",
+				dfscore ? atoi(dfscore) : 0, cl->ping, cl->name, i != ps->clientNum ? svs.clients[ps->clientNum].name : "" );
+
+			if ( statusLength + playerLength >= MAX_PACKETLEN-4 )
+				break; // can't hold any more
+
+			s = Q_stradd( s, player );
+			statusLength += playerLength;
+		}
+	}
+
+	NET_OutOfBandPrint( NS_SERVER, from, "statusResponse\n%s\n%s", infostring, status );
+}
+
+
+/*
+================
 SVC_Info
 
 Responds with a short info message that should be enough to determine
@@ -940,6 +1016,8 @@ static void SV_ConnectionlessPacket( const netadr_t *from, msg_t *msg ) {
 
 	if (!Q_stricmp(c, "getstatus")) {
 		SVC_Status( from );
+	} else if (!Q_stricmp(c, "getdfstatus")) {
+		SVC_Status_Defrag( from );
 	} else if (!Q_stricmp(c, "getinfo")) {
 		SVC_Info( from );
 	} else if (!Q_stricmp(c, "getchallenge")) {
