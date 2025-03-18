@@ -131,8 +131,10 @@ void SV_SetConfigstring (int index, const char *val) {
 		// send the data to all relevant clients
 		for (i = 0, client = svs.clients; i < sv.maxclients; i++, client++) {
 			if ( client->state < CS_ACTIVE ) {
-				if ( client->state == CS_PRIMED )
-					client->csUpdated[ index ] = qtrue;
+				if ( client->state == CS_PRIMED || client->state == CS_CONNECTED ) {
+					// track CS_CONNECTED clients as well to optimize gamestate acknowledge after downloading/retransmission
+					client->csUpdated[index] = qtrue;
+				}
 				continue;
 			}
 			// do not always send server info to all clients
@@ -554,6 +556,7 @@ void SV_SpawnServer( const char *mapname, qboolean killBots ) {
 
 	// run a few frames to allow everything to settle
 	for ( i = 0; i < 3; i++ ) {
+		Cbuf_Wait();
 		sv.time += 100;
 		VM_Call( gvm, 1, GAME_RUN_FRAME, sv.time );
 		SV_BotFrame( sv.time );
@@ -599,6 +602,7 @@ void SV_SpawnServer( const char *mapname, qboolean killBots ) {
 	}
 
 	// run another frame to allow things to look at all the players
+	Cbuf_Wait();
 	sv.time += 100;
 	VM_Call( gvm, 1, GAME_RUN_FRAME, sv.time );
 	SV_BotFrame( sv.time );
@@ -678,6 +682,9 @@ void SV_SpawnServer( const char *mapname, qboolean killBots ) {
 	Com_Printf ("-----------------------------------\n");
 
 	Sys_SetStatus( "Running map %s", mapname );
+
+	// suppress hitch warning
+	Com_FrameInit();
 }
 
 
