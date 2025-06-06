@@ -2,22 +2,12 @@ name: build
 
 on:
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '*.txt'
-      - '.gitignore'
-      - 'docs/*'
+    paths-ignore: ['**.md', '*.txt', '.gitignore', 'docs/*']
   push:
-    branches:
-      - master
-    paths-ignore:
-      - '**.md'
-      - '*.txt'
-      - '.gitignore'
-      - 'docs/*'
+    branches: [master]
+    paths-ignore: ['**.md', '*.txt', '.gitignore', 'docs/*']
   release:
     types: [published]
-
   workflow_dispatch:
 
 jobs:
@@ -28,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x86, x86_64]
-        cc: [gcc]
+  #      cc: [gcc]
         btype: [Release, Debug]
         include:
           - arch: x86
@@ -53,7 +43,8 @@ jobs:
 
     - uses: msys2/setup-msys2@v2
       with:
-        install: ${{ matrix.prefix }}-binutils ${{ matrix.prefix }}-make ${{ matrix.prefix }}-${{ matrix.cc }}
+    #    install: ${{ matrix.prefix }}-binutils ${{ matrix.prefix }}-make ${{ matrix.prefix }}-${{ matrix.cc }}
+        install: ${{ matrix.prefix }}-{binutils,make,gcc}
         msystem: ${{ matrix.msystem }}
         path-type: inherit
         release: false
@@ -79,7 +70,7 @@ jobs:
         make ${{ matrix.rule }} -j$(nproc) ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl
 
     - uses: actions/upload-artifact@v4
-      if: matrix.cc == 'gcc' && matrix.btype == 'release'
+      if: matrix.cc == 'gcc' && matrix.btype == 'Release'
       with:
         name: windows-mingw-${{ matrix.arch }}
         path: bin
@@ -139,7 +130,7 @@ jobs:
         msbuild code\win32\msvc2017\quake3e.vcxproj -p:TargetName=quake3e,Configuration=${{ matrix.btype }},Platform=${{ matrix.platform }},UseWasapi=USE_WASAPI=0 /p:PlatformToolset=v143 -t:Clean
 
     - uses: actions/upload-artifact@v4
-      if: ${{ matrix.btype == 'release' }}
+      if: ${{ matrix.btype == 'Release' }}
       with:
         name: windows-msvc-${{ matrix.pkg_suffix }}
         path: bin
@@ -173,14 +164,13 @@ jobs:
 
     - name: Install tools
       run: |
-        if [ ${{ matrix.arch }} == "x86" ]; then
-          sudo dpkg --add-architecture i386
-          sudo apt-get -qq update
-          sudo apt-get -y install gcc-multilib libcurl4-openssl-dev:i386 mesa-common-dev:i386 libxxf86dga-dev:i386 libxrandr-dev:i386 libxxf86vm-dev:i386 libasound-dev:i386
-        else
-          sudo apt-get -qq update
-          sudo apt-get -y install libcurl4-openssl-dev mesa-common-dev libxxf86dga-dev libxrandr-dev libxxf86vm-dev libasound-dev libsdl2-dev
-        fi
+         sudo apt-get -qq update
+         if [ "${{ matrix.arch }}" = "x86" ]; then
+           sudo dpkg --add-architecture i386
+           sudo apt-get install -y gcc-multilib libcurl4-openssl-dev:i386 mesa-common-dev:i386
+         else
+           sudo apt-get install -y libcurl4-openssl-dev mesa-common-dev libsdl2-dev
+         fi
 
     - uses: actions/checkout@v4
       with:
@@ -194,7 +184,7 @@ jobs:
         make ${{ matrix.rule }} -j$(nproc) ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin ${{ matrix.use_sdl }} USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl
 
     - uses: actions/upload-artifact@v4
-      if: matrix.cc == 'gcc' && matrix.btype == 'release'
+      if: matrix.cc == 'gcc' && matrix.btype == 'Release'
       with:
         name: linux-${{ matrix.arch }}
         path: bin
@@ -236,7 +226,7 @@ jobs:
         run: |
           apt-get -qq update
           apt-get install -y make gcc g++
-          apt-get -y install libcurl4-openssl-dev mesa-common-dev libxxf86dga-dev libxrandr-dev libxxf86vm-dev libasound-dev
+          apt-get install -y libcurl4-openssl-dev mesa-common-dev libxxf86dga-dev libxrandr-dev libxxf86vm-dev libasound-dev
           make ${{ matrix.rule }} -j$(nproc) ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=vulkan CNAME=quake3e-vulkan BUILD_SERVER=0
           make clean ARCH=${{ matrix.arch }} 
           make ${{ matrix.rule }} -j$(nproc) ARCH=${{ matrix.arch }} CC=${{ matrix.cc }} DESTDIR=bin USE_SDL=0 USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=opengl
