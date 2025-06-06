@@ -58,6 +58,7 @@ jobs:
         path-type: inherit
         release: false
         update: false
+        disable-cache: true
 
     - uses: actions/checkout@v4
       with:
