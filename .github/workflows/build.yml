@@ -55,13 +55,19 @@ jobs:
       with:
         install: ${{ matrix.prefix }}-binutils ${{ matrix.prefix }}-make ${{ matrix.prefix }}-${{ matrix.cc }}
         msystem: ${{ matrix.msystem }}
-        path-type: minimal
+        path-type: inherit
         release: false
         update: false
 
     - uses: actions/checkout@v4
       with:
         submodules: recursive
+
+    - name: Verify tools
+      run: |
+        which make
+        make --version
+        gcc --version
 
     - name: Build
       if: ${{ github.event_name != 'release' || matrix.btype != 'Debug' }} # skip Debug configuration in Release build
