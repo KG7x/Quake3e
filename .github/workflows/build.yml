@@ -43,8 +43,7 @@ jobs:
 
     - uses: msys2/setup-msys2@v2
       with:
-    #    install: ${{ matrix.prefix }}-binutils ${{ matrix.prefix }}-make ${{ matrix.prefix }}-${{ matrix.cc }}
-        install: ${{ matrix.prefix }}-{binutils,make,gcc}
+        install: ${{ matrix.prefix }}-binutils ${{ matrix.prefix }}-make ${{ matrix.prefix }}-gcc
         msystem: ${{ matrix.msystem }}
         path-type: inherit
         release: false
@@ -167,9 +166,9 @@ jobs:
          sudo apt-get -qq update
          if [ "${{ matrix.arch }}" = "x86" ]; then
            sudo dpkg --add-architecture i386
-           sudo apt-get install -y gcc-multilib libcurl4-openssl-dev:i386 mesa-common-dev:i386
+           sudo apt-get install -y gcc-multilib libcurl4-openssl-dev:i386 mesa-common-dev:i386 libxxf86dga-dev:i386 libxrandr-dev:i386 libxxf86vm-dev:i386 libasound-dev:i386
          else
-           sudo apt-get install -y libcurl4-openssl-dev mesa-common-dev libsdl2-dev
+           sudo apt-get install -y libcurl4-openssl-dev mesa-common-dev libxxf86dga-dev libxrandr-dev libxxf86vm-dev libasound-dev libsdl2-dev
          fi
 
     - uses: actions/checkout@v4
