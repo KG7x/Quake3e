@@ -272,7 +272,7 @@ ifeq ($(USE_SYSTEM_VORBIS),1)
 endif
 
 # extract version info
-VERSION=$(shell grep -m1 'define[[:space:]]\+Q3_VERSION[[:space:]]\+\"' $(CMDIR)/q_shared.h | sed -e 's/.*"\([^"]*\)".*/\1/' || echo "1.32e")
+VERSION=$(shell grep -m1 'define[[:space:]]\+Q3_VERSION[[:space:]]\+\"' $(CMDIR)/q_shared.h | sed -e 's/.*"\([^"]*\)".*/\1/' || echo "Q3 1.32e")
 #ifneq ($(COMPILE_PLATFORM),darwin)
 #VERSION=$(shell grep ".\+define[ \t]\+Q3_VERSION[ \t]\+\+" $(CMDIR)/q_shared.h | \
 #  sed -e 's/.*".* \([^ ]*\)"/\1/')
