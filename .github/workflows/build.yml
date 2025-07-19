@@ -37,7 +37,7 @@ jobs:
 
           - arch: x86_64
             msystem: MINGW64
-            prefix: mingw-w64-ucrt-x86_64-gcc # mingw-w64-x86_64
+            prefix: mingw-w64-ucrt-x86_64 # mingw-w64-x86_64
 
           - btype: Release
             rule: install
