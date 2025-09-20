@@ -723,7 +723,7 @@ Responds with detailed server info: CS_SERVERINFO and the scoreboard.
 ================
 */
 static void SVC_Status_Defrag( const netadr_t *from ) {
-	char	player[MAX_NAME_LENGTH + 32]; // score + ping + name
+	char	player[MAX_NAME_LENGTH + 64]; // score + ping + name
 	char	status[MAX_PACKETLEN];
 	char	*s;
 	int		i;
