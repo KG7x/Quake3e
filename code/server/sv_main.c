@@ -731,8 +731,10 @@ static void SVC_Status_Defrag( const netadr_t *from ) {
 	playerState_t	*ps;
 	int		statusLength;
 	int		playerLength;
+	char	tld;
 	char	infostring[MAX_INFO_STRING+160]; // add some space for challenge string
-	const char *dfscore;
+	int		dfscore;
+	const char	*spectating;
 
 	// ignore if we are in single player
 #ifndef DEDICATED
@@ -741,10 +743,10 @@ static void SVC_Status_Defrag( const netadr_t *from ) {
 	}
 #endif
 
-	// Prevent using getstatus as an amplifier
+	// Prevent using getdfstatus as an amplifier
 	if ( SVC_RateLimitAddress( from, 10, 1000 ) ) {
 		if ( com_developer->integer ) {
-			Com_Printf( "SVC_Status: rate limit from %s exceeded, dropping request\n",
+			Com_Printf( "SVC_Status_Defrag: rate limit from %s exceeded, dropping request\n",
 				NET_AdrToString( from ) );
 		}
 		return;
@@ -753,7 +755,7 @@ static void SVC_Status_Defrag( const netadr_t *from ) {
 	// Allow getstatus to be DoSed relatively easily, but prevent
 	// excess outbound bandwidth usage when being flooded inbound
 	if ( SVC_RateLimit( &outboundRateLimit, 10, 100 ) ) {
-		Com_DPrintf( "SVC_Status: rate limit exceeded, dropping request\n" );
+		Com_DPrintf( "SVC_Status_Defrag: rate limit exceeded, dropping request\n" );
 		return;
 	}
 
@@ -776,9 +778,13 @@ static void SVC_Status_Defrag( const netadr_t *from ) {
 		if ( cl->state >= CS_CONNECTED ) {
 
 			ps = SV_GameClientNum( i );
-			dfscore = Info_ValueForKey(sv.configstrings[CS_PLAYERS+i], "dfscore");
-			playerLength = Com_sprintf( player, sizeof( player ), "%i %i \"%s\" \"%s\"\n",
-				dfscore ? atoi(dfscore) : 0, cl->ping, cl->name, i != ps->clientNum ? svs.clients[ps->clientNum].name : "" );
+			// dfscore = Info_ValueForKey(sv.configstrings[CS_PLAYERS+i], "dfscore");
+			dfscore = atoi( Info_ValueForKey( sv.configstrings[CS_PLAYERS+i], "dfscore" ) );
+			spectating = (i != ps->clientNum) ? svs.clients[ps->clientNum].name : "";
+			Q_strncpyz( tld, Info_ValueForKey( cl->userinfo, "tld" ), sizeof( tld ) );
+
+			playerLength = Com_sprintf( player, sizeof( player ), "%i %i \"%s\" \"%s\" \"%s\"\n",
+				dfscore, cl->ping, cl->name, spectating, tld );
 
 			if ( statusLength + playerLength >= MAX_PACKETLEN-4 )
 				break; // can't hold any more
