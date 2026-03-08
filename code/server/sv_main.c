@@ -779,12 +779,12 @@ static void SVC_Status_Defrag( const netadr_t *from ) {
 
 			ps = SV_GameClientNum( i );
 			// dfscore = Info_ValueForKey(sv.configstrings[CS_PLAYERS+i], "dfscore");
-			dfscore = atoi( Info_ValueForKey( sv.configstrings[CS_PLAYERS+i], "dfscore" ) );
+			dfscore = Info_ValueForKey( sv.configstrings[CS_PLAYERS+i], "dfscore" );
 			spectating = (i != ps->clientNum) ? svs.clients[ps->clientNum].name : "";
 			Q_strncpyz( tld, Info_ValueForKey( cl->userinfo, "tld" ), sizeof( tld ) );
 
 			playerLength = Com_sprintf( player, sizeof( player ), "%i %i \"%s\" \"%s\" \"%s\"\n",
-				dfscore, cl->ping, cl->name, spectating, tld );
+				dfscore ? atoi(dfscore) : 0, cl->ping, cl->name, spectating, tld );
 
 			if ( statusLength + playerLength >= MAX_PACKETLEN-4 )
 				break; // can't hold any more
