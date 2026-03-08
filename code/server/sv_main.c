@@ -733,7 +733,7 @@ static void SVC_Status_Defrag( const netadr_t *from ) {
 	int		playerLength;
 	char	tld[3];
 	char	infostring[MAX_INFO_STRING+160]; // add some space for challenge string
-	int		dfscore;
+	const char	*dfscore;
 	const char	*spectating;
 
 	// ignore if we are in single player
