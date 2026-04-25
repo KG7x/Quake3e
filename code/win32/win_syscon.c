@@ -643,8 +643,8 @@ static LRESULT WINAPI InputLineWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 			while ( *s == '\\' || *s == '/' ) // skip leading slashes
 				s++;
 
-			strncat( s_wcd.consoleText, s, sizeof( s_wcd.consoleText ) - strlen( s_wcd.consoleText ) - 2 );
-			strcat( s_wcd.consoleText, "\n" );
+			Q_strcat( s_wcd.consoleText, sizeof( s_wcd.consoleText ), s );
+			Q_strcat( s_wcd.consoleText, sizeof( s_wcd.consoleText ), "\n" );
 
 			SetWindowText( s_wcd.hwndInputLine, T("") );
 			Field_Clear( &console );
@@ -1149,8 +1149,8 @@ void HandleConsoleEvents( void ) {
 	MSG msg;
 
 	// pump the message loop
-	while ( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) {
-		if ( GetMessage( &msg, NULL, 0, 0 ) <= 0 ) {
+	while ( PeekMessage( &msg, s_wcd.hWnd, 0, 0, PM_NOREMOVE ) ) {
+		if ( GetMessage( &msg, s_wcd.hWnd, 0, 0 ) <= 0 ) {
 			Cmd_Clear();
 			Com_Quit_f();
 		}
