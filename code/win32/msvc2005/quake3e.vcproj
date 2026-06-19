@@ -838,7 +838,7 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath="..\qe3.ico"
+				RelativePath="..\qe3_old.ico"
 				>
 			</File>
 			<File
