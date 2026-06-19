@@ -105,7 +105,22 @@ jobs:
         repository: ec-/msys32
         path: msys
 
+    - name: Cache msys32
+      id: cache-msys
+      uses: actions/cache@v5
+      with:
+        path: msys
+        key: msys32-${{ runner.os }}-${{ hashFiles('msys/msys32.7z') }}
+
+    - name: Checkout msys32 tools
+      if: steps.cache-msys.outputs.cache-hit != 'true'
+      uses: actions/checkout@v7
+      with:
+        repository: ec-/msys32
+        path: msys
+
     - name: Extract msys32.7z
+      if: steps.cache-msys.outputs.cache-hit != 'true'
       run: |
         7z x %GITHUB_WORKSPACE%/msys/msys32.7z -o%GITHUB_WORKSPACE%/msys
       shell: cmd
