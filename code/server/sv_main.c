@@ -760,7 +760,7 @@ static void SVC_StatusDefrag_ParseUIDs( const char *scoreOutput, int *uidMap, in
 }
 
 static void SVC_Status_Defrag( const netadr_t *from ) {
-	char	player[MAX_NAME_LENGTH + 64]; // score + ping + name
+	char	player[MAX_SAY_TEXT]; // score + ping + name
 	char	status[MAX_PACKETLEN];
 	char	*s;
 	int	i;
@@ -817,6 +817,10 @@ static void SVC_Status_Defrag( const netadr_t *from ) {
 	// echo back the parameter to status. so master servers can use it as a challenge
 	// to prevent timed spoofed reply packets that add ghost servers
 	Info_SetValueForKey( infostring, "challenge", Cmd_Argv( 1 ) );
+
+	if ( Cvar_VariableIntegerValue( "sv_cheats" ) ) {
+		Info_SetValueForKey( infostring, "sv_cheats", "1" );
+	}
 
 	s = status;
 	status[0] = '\0';
